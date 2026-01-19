@@ -1,0 +1,25 @@
+[0.017s] Invoking command in '/home/arya/ROS/UR5e/build/ur5e_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arya/ROS/UR5e/build/ur5e_description -- -j8 -l8
+[0.077s] Invoked command in '/home/arya/ROS/UR5e/build/ur5e_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arya/ROS/UR5e/build/ur5e_description -- -j8 -l8
+[0.092s] Invoking command in '/home/arya/ROS/UR5e/build/ur5e_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arya/ROS/UR5e/build/ur5e_description
+[0.103s] -- Install configuration: ""
+[0.103s] -- Execute custom install script
+[0.104s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/urdf/ur5e.urdf.xacro
+[0.104s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/launch/simulate.launch.py
+[0.104s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/rviz/ur5e.rviz
+[0.104s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/meshes/Toolhead_V3_Assembly.STL
+[0.105s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/package_run_dependencies/ur5e_description
+[0.105s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/parent_prefix_path/ur5e_description
+[0.105s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.sh
+[0.106s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.dsv
+[0.106s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/path.sh
+[0.106s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/path.dsv
+[0.106s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.bash
+[0.106s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.sh
+[0.107s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.zsh
+[0.107s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.dsv
+[0.107s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/package.dsv
+[0.121s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/packages/ur5e_description
+[0.121s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig.cmake
+[0.122s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig-version.cmake
+[0.122s] -- Up-to-date symlink: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/package.xml
+[0.125s] Invoked command in '/home/arya/ROS/UR5e/build/ur5e_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arya/ROS/UR5e/build/ur5e_description
