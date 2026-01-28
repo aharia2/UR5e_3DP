@@ -1,0 +1,54 @@
+[0.011s] Invoking command in '/home/arya/ROS/UR5e/build/ur5e_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/arya/ROS/UR5e/src/ur5e_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/arya/ROS/UR5e/install/ur5e_description
+[0.072s] -- The C compiler identification is GNU 13.3.0
+[0.129s] -- The CXX compiler identification is GNU 13.3.0
+[0.156s] -- Detecting C compiler ABI info
+[0.256s] -- Detecting C compiler ABI info - done
+[0.265s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.265s] -- Detecting C compile features
+[0.265s] -- Detecting C compile features - done
+[0.277s] -- Detecting CXX compiler ABI info
+[0.391s] -- Detecting CXX compiler ABI info - done
+[0.400s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.401s] -- Detecting CXX compile features
+[0.401s] -- Detecting CXX compile features - done
+[0.405s] -- Found ament_cmake: 2.5.4 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.550s] -- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+[0.634s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.703s] -- Found urdf: 2.10.0 (/opt/ros/jazzy/share/urdf/cmake)
+[0.745s] -- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+[0.758s] -- Found xacro: 2.1.1 (/opt/ros/jazzy/share/xacro/cmake)
+[0.761s] -- Found ament_lint_auto: 0.17.3 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+[0.864s] -- Added test 'flake8' to check Python code syntax and style conventions
+[0.864s] -- Configured 'flake8' exclude dirs and/or files: 
+[0.864s] -- Added test 'lint_cmake' to check CMake code style
+[0.865s] -- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+[0.866s] -- Added test 'xmllint' to check XML markup files
+[0.868s] -- Configuring done (0.8s)
+[0.870s] -- Generating done (0.0s)
+[0.871s] -- Build files have been written to: /home/arya/ROS/UR5e/build/ur5e_description
+[0.879s] Invoked command in '/home/arya/ROS/UR5e/build/ur5e_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/arya/ROS/UR5e/src/ur5e_description -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/arya/ROS/UR5e/install/ur5e_description
+[0.881s] Invoking command in '/home/arya/ROS/UR5e/build/ur5e_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arya/ROS/UR5e/build/ur5e_description -- -j8 -l8
+[0.943s] Invoked command in '/home/arya/ROS/UR5e/build/ur5e_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/arya/ROS/UR5e/build/ur5e_description -- -j8 -l8
+[0.962s] Invoking command in '/home/arya/ROS/UR5e/build/ur5e_description': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arya/ROS/UR5e/build/ur5e_description
+[0.975s] -- Install configuration: ""
+[0.976s] -- Execute custom install script
+[0.977s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/urdf/ur5e.urdf.xacro
+[0.987s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/launch/simulate.launch.py
+[0.998s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/rviz/ur5e.rviz
+[1.014s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/meshes/Toolhead_V3_Assembly.STL
+[1.032s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/package_run_dependencies/ur5e_description
+[1.045s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/parent_prefix_path/ur5e_description
+[1.054s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.sh
+[1.063s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.dsv
+[1.082s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/path.sh
+[1.092s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/environment/path.dsv
+[1.102s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.bash
+[1.120s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.sh
+[1.137s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.zsh
+[1.145s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/local_setup.dsv
+[1.162s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/package.dsv
+[1.177s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ament_index/resource_index/packages/ur5e_description
+[1.186s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig.cmake
+[1.195s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig-version.cmake
+[1.205s] -- Symlinking: /home/arya/ROS/UR5e/install/ur5e_description/share/ur5e_description/package.xml
+[1.219s] Invoked command in '/home/arya/ROS/UR5e/build/ur5e_description' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/arya/ROS/UR5e/build/ur5e_description

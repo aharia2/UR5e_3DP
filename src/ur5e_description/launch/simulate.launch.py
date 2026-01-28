@@ -13,7 +13,7 @@ def generate_launch_description():
     
     default_model_path = os.path.join(pkg_share, 'urdf', 'ur5e.urdf.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'ur5e.rviz')
-
+  
     robot_description_content = Command(['xacro ', LaunchConfiguration('model'), ' ur_type:=ur5e', ' name:=ur'])
     robot_description = {'robot_description': ParameterValue(robot_description_content, value_type=str)}
 

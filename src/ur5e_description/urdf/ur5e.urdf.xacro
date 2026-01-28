@@ -27,7 +27,6 @@
   <!-- World link -->
   <link name="world" />
 
-  <!-- Tool Head Link -->
   <link name="tool_head">
     <visual>
       <geometry>

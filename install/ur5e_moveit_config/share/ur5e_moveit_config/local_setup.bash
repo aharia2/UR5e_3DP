@@ -1,0 +1,1 @@
+/home/arya/ROS/UR5e/build/ur5e_moveit_config/ament_cmake_environment_hooks/local_setup.bash
