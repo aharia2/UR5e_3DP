@@ -1,1 +1,0 @@
-/home/arya/ROS/UR5e/src/ur5e_moveit_config/launch/moveit.launch.py

@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5e">
 
-  <!-- Import UR5e macro from ur_description -->
   <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
 
-  <!-- Instantiate the robot -->
   <xacro:arg name="name" default="ur"/>
   <xacro:arg name="ur_type" default="ur5e"/>
   
@@ -24,8 +22,29 @@
     <origin xyz="0 0 0" rpy="0 0 0" />
   </xacro:ur_robot>
 
-  <!-- World link -->
   <link name="world" />
+
+  <link name="floor">
+    <visual>
+      <geometry>
+        <box size="3.048 3.048 0.0254"/>
+      </geometry>
+      <material name="floor_color">
+        <color rgba="0.3 0.3 0.3 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="3.048 3.048 0.0254"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_to_floor" type="fixed">
+    <parent link="world"/>
+    <child link="floor"/>
+    <origin xyz="0 0 -0.0127" rpy="0 0 0"/>
+  </joint>
 
   <link name="tool_head">
     <visual>
@@ -36,17 +55,21 @@
         <color rgba="1 1 1 1"/>
       </material>
     </visual>
+    
+    <collision>
+      <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.21 0.15"/>
+      </geometry>
+    </collision>
   </link>
 
-  <!-- Attach tool head to wrist_3_link (which is named 'wrist_3_link' in the macro) -->
-  <!-- Note: The macro typically prefixes link names if tf_prefix is set, but here it is empty -->
   <joint name="tool_head_joint" type="fixed">
     <parent link="tool0"/>
     <child link="tool_head"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <!-- Tool Tip (TCP) Link -->
   <link name="tool_tip">
     <visual>
       <geometry>

@@ -1,8 +1,8 @@
-# Install script for directory: /home/arya/ROS/UR5e/src/ur5e_description
+# Install script for directory: /home/ah66586/ros2_ws/UR5e_3DP/src/ur5e_description
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/arya/ROS/UR5e/install/ur5e_description")
+  set(CMAKE_INSTALL_PREFIX "/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,7 +43,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/arya/ROS/UR5e/build/ur5e_description/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
+  include("/home/ah66586/ros2_ws/UR5e_3DP/build/ur5e_description/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -54,5 +54,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/arya/ROS/UR5e/build/ur5e_description/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/ah66586/ros2_ws/UR5e_3DP/build/ur5e_description/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

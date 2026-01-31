@@ -1,7 +1,7 @@
 # generated from
 # ament_cmake_core/cmake/symlink_install/ament_cmake_symlink_install_uninstall_script.cmake.in
 
-set(install_manifest "/home/arya/ROS/UR5e/build/ur5e_description/symlink_install_manifest.txt")
+set(install_manifest "/home/ah66586/ros2_ws/UR5e_3DP/build/ur5e_description/symlink_install_manifest.txt")
 if(NOT EXISTS "${install_manifest}")
   message(FATAL_ERROR "Cannot find symlink install manifest: ${install_manifest}")
 endif()
