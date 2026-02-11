@@ -1,0 +1,58 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found ament_cmake: 2.5.5 (/opt/ros/jazzy/share/ament_cmake/cmake)
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Override CMake install command with custom implementation using symlinks instead of copying resources
+-- Found urdf: 2.10.0 (/opt/ros/jazzy/share/urdf/cmake)
+-- Found TinyXML2 via Config file: /usr/lib/x86_64-linux-gnu/cmake/tinyxml2
+-- Found xacro: 2.1.1 (/opt/ros/jazzy/share/xacro/cmake)
+-- Found ament_lint_auto: 0.17.4 (/opt/ros/jazzy/share/ament_lint_auto/cmake)
+-- Added test 'flake8' to check Python code syntax and style conventions
+-- Configured 'flake8' exclude dirs and/or files: 
+-- Added test 'lint_cmake' to check CMake code style
+-- Added test 'pep257' to check Python code against some of the docstring style conventions in PEP 257
+-- Added test 'xmllint' to check XML markup files
+-- Configuring done (0.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: /home/ah66586/ros2_ws/UR5e_3DP/build/ur5e_description
+-- Install configuration: ""
+-- Execute custom install script
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/UR5E2.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/debug_check.urdf
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/minimal_test.urdf
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/minimal_two_link.urdf
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/test.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_collision_only.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_cylinders.urdf
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_cylinders_revolute.urdf
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_debug.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_intermediate.urdf.xacro
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/launch/simulate.launch.py
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/rviz/ur5e.rviz
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/meshes/Toolhead_V3_Assembly.STL
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ament_index/resource_index/package_run_dependencies/ur5e_description
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ament_index/resource_index/parent_prefix_path/ur5e_description
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.sh
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/environment/ament_prefix_path.dsv
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/environment/path.sh
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/environment/path.dsv
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/local_setup.bash
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/local_setup.sh
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/local_setup.zsh
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/local_setup.dsv
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/package.dsv
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ament_index/resource_index/packages/ur5e_description
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig.cmake
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/cmake/ur5e_descriptionConfig-version.cmake
+-- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/package.xml
