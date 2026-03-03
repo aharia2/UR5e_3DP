@@ -1,0 +1,49 @@
+[0.009s] Invoking command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/ah66586/ros2_ws/UR5e_3DP/src/ur_cell_config -DCMAKE_INSTALL_PREFIX=/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config
+[0.018s] -- Found ament_cmake: 2.5.5 (/opt/ros/jazzy/share/ament_cmake/cmake)
+[0.160s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.226s] -- Configuring done (0.2s)
+[0.228s] -- Generating done (0.0s)
+[0.229s] -- Build files have been written to: /home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config
+[0.231s] Invoked command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config' returned '0': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake /home/ah66586/ros2_ws/UR5e_3DP/src/ur_cell_config -DCMAKE_INSTALL_PREFIX=/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config
+[0.232s] Invoking command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config -- -j16 -l16
+[0.256s] Invoked command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config' returned '0': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --build /home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config -- -j16 -l16
+[0.263s] Invoking command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config
+[0.267s] -- Install configuration: ""
+[0.267s] -- Execute custom install script
+[0.267s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ament_index/resource_index/package_run_dependencies/ur_cell_config
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ament_index/resource_index/parent_prefix_path/ur_cell_config
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/environment/ament_prefix_path.sh
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/environment/ament_prefix_path.dsv
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/environment/path.sh
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/environment/path.dsv
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/local_setup.bash
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/local_setup.sh
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/local_setup.zsh
+[0.268s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/local_setup.dsv
+[0.268s] -- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/package.dsv
+[0.274s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ament_index/resource_index/packages/ur_cell_config
+[0.274s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/cmake/ur_cell_configConfig.cmake
+[0.274s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/cmake/ur_cell_configConfig-version.cmake
+[0.274s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/package.xml
+[0.274s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/demo.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/move_group.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/moveit_rviz.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/rsp.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/setup_assistant.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/spawn_controllers.launch.py
+[0.275s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/static_virtual_joint_tfs.launch.py
+[0.275s] -- Symlinking: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/ursim.launch.py
+[0.280s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/warehouse_db.launch.py
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/initial_positions.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/joint_limits.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/kinematics.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/moveit.rviz
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/moveit_controllers.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/pilz_cartesian_limits.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ros2_controllers.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/sensors_3d.yaml
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.ros2_control.xacro
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.srdf
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.urdf.xacro
+[0.281s] -- Up-to-date symlink: /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/.setup_assistant
+[0.283s] Invoked command in '/home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config' returned '0': CMAKE_PREFIX_PATH=/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description:/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config:/opt/ros/jazzy/opt/sdformat_vendor:/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_tools_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor:/opt/ros/jazzy DEBUGINFOD_URLS=https://debuginfod.ubuntu.com /usr/bin/cmake --install /home/ah66586/ros2_ws/UR5e_3DP/build/ur_cell_config

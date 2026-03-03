@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import rclpy
+import csv
+import os
+import sys
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from geometry_msgs.msg import Pose, Point
@@ -101,9 +104,10 @@ class CartesianMover(Node):
         return True
     
     def move_to_pose_ptp(self, target_pose):
-        """Move to pose using PTP (point-to-point) planning - uses arcs, not straight lines"""
+        """Move to pose using PTP (point-to-point) planning via MoveGroup goal."""
         from moveit_msgs.action import MoveGroup
-        from moveit_msgs.msg import Constraints, PositionConstraint, OrientationConstraint
+        from moveit_msgs.msg import Constraints, PositionConstraint, OrientationConstraint, BoundingVolume
+        from geometry_msgs.msg import PoseStamped
         from shape_msgs.msg import SolidPrimitive
         
         print(f"\nMoving to pose (PTP):")
@@ -114,26 +118,35 @@ class CartesianMover(Node):
         
         goal = MoveGroup.Goal()
         goal.request.group_name = "ur_arm"
-        goal.request.num_planning_attempts = 10
-        goal.request.allowed_planning_time = 5.0
+        goal.request.num_planning_attempts = 30
+        goal.request.allowed_planning_time = 15.0
+        goal.request.max_velocity_scaling_factor = 0.3
+        goal.request.max_acceleration_scaling_factor = 0.3
         
+        # Build goal constraint — position (1cm tolerance box) + orientation (generous tolerances)
         c = Constraints()
+        
+        # Position: small sphere around target
         pc = PositionConstraint()
         pc.header.frame_id = "base_link"
         pc.link_name = "tool_tip"
-        pc.constraint_region.primitives.append(SolidPrimitive(type=SolidPrimitive.SPHERE, dimensions=[0.01]))
+        sphere = SolidPrimitive()
+        sphere.type = SolidPrimitive.SPHERE
+        sphere.dimensions = [0.01]   # 1 cm tolerance
+        pc.constraint_region.primitives.append(sphere)
         pc.constraint_region.primitive_poses.append(target_pose)
         pc.weight = 1.0
         c.position_constraints.append(pc)
         
+        # Orientation: loose tolerances — robot gets close, Cartesian path enforces exact orientation
         oc = OrientationConstraint()
         oc.header.frame_id = "base_link"
         oc.link_name = "tool_tip"
         oc.orientation = target_pose.orientation
-        oc.absolute_x_axis_tolerance = 0.05
-        oc.absolute_y_axis_tolerance = 0.05
-        oc.absolute_z_axis_tolerance = 0.05
-        oc.weight = 1.0
+        oc.absolute_x_axis_tolerance = 0.5
+        oc.absolute_y_axis_tolerance = 0.5
+        oc.absolute_z_axis_tolerance = 6.28   # free Z rotation
+        oc.weight = 0.5
         c.orientation_constraints.append(oc)
         
         goal.request.goal_constraints.append(c)
@@ -177,19 +190,42 @@ def main():
     mover = CartesianMover()
     
     # =====================================================
-    # DEFINE TARGET POSES HERE (edit these values)
-    # Format: make_pose(x, y, z, qx, qy, qz, qw)
+    # LOAD WAYPOINTS FROM CSV FILE
+    # File format: one pose per line, 7 comma-separated values:
+    #   x, y, z, qx, qy, qz, qw  (meters + quaternion)
+    # Optional header row (any non-numeric first cell) is skipped.
+    # Usage:
+    #   python3 cartesian_mover.py                    <- uses default waypoints.csv
+    #   python3 cartesian_mover.py /path/to/file.csv  <- uses the specified file
     # =====================================================
-    target_poses = [
-        make_pose(0.15, 0.15, 0.01, 0.70711, 0.00056, 0.00056, 0.70711),
-        make_pose(0.25, 0.15, 0.01, 0.70711, 0.00056, 0.00056, 0.70711),
-        make_pose(0.25, 0.25, 0.01, 0.70711, 0.00056, 0.00056, 0.70711),
-        make_pose(0.15, 0.25, 0.01, 0.70711, 0.00056, 0.00056, 0.70711),
-        make_pose(0.15, 0.15, 0.01, 0.70711, 0.00056, 0.00056, 0.70711),
-        
-        # Add more poses here as needed:
-        # make_pose(0.5, 0.0, 0.4, 0.70711, 0.00056, 0.00056, 0.70711),
-    ]
+    default_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'waypoints.csv')
+    csv_file = sys.argv[1] if len(sys.argv) > 1 else default_csv
+
+    if not os.path.isfile(csv_file):
+        print(f"ERROR: Waypoint file not found: {csv_file}")
+        print(f"Create a CSV with 7 columns per row: x, y, z, qx, qy, qz, qw")
+        rclpy.shutdown()
+        return
+
+    target_poses = []
+    with open(csv_file, 'r') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            row = [c.strip() for c in row if c.strip()]
+            if len(row) < 7:
+                continue  # skip empty / short rows
+            try:
+                x, y, z, qx, qy, qz, qw = [float(v) for v in row[:7]]
+                target_poses.append(make_pose(x, y, z, qx, qy, qz, qw))
+            except ValueError:
+                pass  # skip header or comment lines
+
+    if len(target_poses) < 2:
+        print(f"ERROR: Need at least 2 valid poses in {csv_file}")
+        rclpy.shutdown()
+        return
+
+    print(f"Loaded {len(target_poses)} waypoints from: {csv_file}")
     
     # Execute motion: PTP to first corner, then Cartesian for entire square
     print(f"\n{'='*50}")
@@ -211,12 +247,12 @@ def main():
         req.header.frame_id = "base_link"
         req.group_name = "ur_arm"
         req.link_name = "tool_tip"
-        req.waypoints = target_poses[1:]  # All points except the first (already there)
+        req.waypoints = target_poses  # All points — PTP already placed us at point 0
         req.max_step = 0.01  # 1cm resolution
         req.jump_threshold = 0.0
         req.avoid_collisions = True
         
-        print(f"Planning continuous path through {len(target_poses)-1} waypoints...")
+        print(f"Planning continuous path through {len(target_poses)} waypoints...")
         future = mover.compute_plan_client.call_async(req)
         rclpy.spin_until_future_complete(mover, future)
         response = future.result()
