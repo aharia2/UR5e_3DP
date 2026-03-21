@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  ur5e_with_eoat.urdf.xacro
+
+  Drop-in replacement for ur_robot_driver's ur.urdf.xacro that additionally
+  attaches the custom 3D-printing tool head (tool_head + tool_tip) to tool0.
+
+  All arguments match exactly what ur_rsp.launch.py passes so this file can be
+  used as the description_file for that launch (and therefore for ur_control).
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5e">
+
+  <!-- ── Include the full UR driver xacro (handles hardware interface + RSP) -->
+  <xacro:include filename="$(find ur_robot_driver)/urdf/ur.urdf.xacro"/>
+
+  <!-- ── Custom 3D-printing EOAT ──────────────────────────────────────────── -->
+  <link name="tool_head">
+    <visual>
+      <geometry>
+        <mesh filename="package://ur5e_description/meshes/Toolhead_V3_Assembly.STL"
+              scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.21 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="tool_head_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="tool_head"/>
+    <origin xyz="0 0 0" rpy="3.14159265 0 0"/>
+  </joint>
+
+  <!-- tool_tip = nozzle point used for IK / Cartesian planning -->
+  <link name="tool_tip">
+    <visual>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="tool_tip_joint" type="fixed">
+    <parent link="tool_head"/>
+    <child link="tool_tip"/>
+    <origin xyz="0 -0.185928 0.009144" rpy="0 0 0"/>
+  </joint>
+
+</robot>

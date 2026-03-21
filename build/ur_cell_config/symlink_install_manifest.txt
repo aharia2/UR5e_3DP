@@ -16,10 +16,12 @@
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/demo.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/move_group.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/moveit_rviz.launch.py
+/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/robot.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/rsp.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/setup_assistant.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/spawn_controllers.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/static_virtual_joint_tfs.launch.py
+/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/ur5e_eoat_rsp.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/ursim.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/launch/warehouse_db.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/initial_positions.yaml
@@ -30,6 +32,7 @@
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/pilz_cartesian_limits.yaml
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ros2_controllers.yaml
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/sensors_3d.yaml
+/home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/trajectory_execution.yaml
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.ros2_control.xacro
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.srdf
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur_cell_config/share/ur_cell_config/config/ur5e.urdf.xacro

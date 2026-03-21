@@ -1,14 +1,5 @@
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/UR5E2.urdf.xacro
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/debug_check.urdf
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/minimal_test.urdf
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/minimal_two_link.urdf
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/test.urdf.xacro
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e.urdf.xacro
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_collision_only.urdf.xacro
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_cylinders.urdf
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_cylinders_revolute.urdf
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_debug.urdf.xacro
-/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_intermediate.urdf.xacro
+/home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/urdf/ur5e_with_eoat.urdf.xacro
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/launch/simulate.launch.py
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/rviz/ur5e.rviz
 /home/ah66586/ros2_ws/UR5e_3DP/install/ur5e_description/share/ur5e_description/meshes/Toolhead_V3_Assembly.STL

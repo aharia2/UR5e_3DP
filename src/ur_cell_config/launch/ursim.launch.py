@@ -21,7 +21,7 @@ from launch.substitutions import PathJoinSubstitution
 
 
 # ── Tuneable constants ────────────────────────────────────────────────────────
-ROBOT_IP  = "127.0.0.1"   # URSim runs on localhost
+ROBOT_IP  = "192.168.56.101"   # URSim via start_ursim.sh (VirtualBox network)
 UR_TYPE   = "ur5e"
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -42,6 +42,10 @@ def generate_launch_description():
             "launch_dashboard_client": "false",
             "headless_mode":         "true",
             "initial_joint_controller": "scaled_joint_trajectory_controller",
+            # Use our custom RSP that publishes the URDF with tool_head + tool_tip
+            "description_launchfile": PathJoinSubstitution(
+                [FindPackageShare("ur_cell_config"), "launch", "ur5e_eoat_rsp.launch.py"]
+            ),
         }.items(),
     )
 

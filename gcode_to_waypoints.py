@@ -44,7 +44,7 @@ ROBOT_Z_OFFSET = 0.050       # m
 # Use these to shift the entire print without changing the centre-point math.
 X_OFFSET = 0.000             # m  positive = towards robot's +X
 Y_OFFSET = 0.000             # m  positive = towards robot's +Y
-Z_OFFSET = 0.000             # m  positive = up
+Z_OFFSET = 0.03             # m  positive = up
 
 # Orientation: tool pointing straight down (matches existing waypoints.csv)
 QX, QY, QZ, QW = 0.70711, 0.00056, 0.00056, 0.70711

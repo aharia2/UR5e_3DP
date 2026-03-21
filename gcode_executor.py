@@ -40,11 +40,13 @@ import tf2_ros
 from Klipper_communcation import KlipperComm
 
 # ─── Tunable parameters ────────────────────────────────────────────────────
-EXTRUDE_PER_POINT    = 1.0    # mm of filament to extrude per waypoint
-DEFAULT_VELOCITY     = 0.3    # default velocity scaling factor (0.0–1.0)
+EXTRUDE_MULTIPLIER   = 1.0   # multiplier for distance-based extrusion (mm/mm)
+EXTRUDING_VELOCITY   = 0.1   # arm velocity (0.01–1.0) while EXTRUDING filament — 5% = 50 mm/s
+TRAVEL_VELOCITY      = 0.1    # arm velocity (0.01–1.0) for TRAVEL (no extrusion) moves
 POSITION_TOLERANCE   = 0.008  # 8 mm – acceptable error before extrusion
 CARTESIAN_STEP       = 0.005  # 5 mm interpolation step along each segment
-KLIPPER_FEEDRATE     = 600    # mm/min extrusion feedrate sent to Klipper
+KLIPPER_FEEDRATE     = 600   # mm/min max feedrate (motor limit: 40 mm/s = 2400 mm/min)
+KLIPPER_MIN_FEEDRATE = 200    # mm/min minimum Klipper feedrate clamp (prevents silent rejects)
 # ───────────────────────────────────────────────────────────────────────────
 
 
@@ -80,6 +82,11 @@ class GCodeExecutor(Node):
         print("Waiting for MoveIt services...")
         self.cart_client.wait_for_service()
         self.execute_client.wait_for_server()
+
+        # Let TF buffer fill before any lookups
+        print("Waiting for TF data...")
+        for _ in range(20):
+            rclpy.spin_once(self, timeout_sec=0.1)
         print("Ready!")
 
     # ── TF helpers ────────────────────────────────────────────────────────
@@ -107,64 +114,64 @@ class GCodeExecutor(Node):
 
     # ── Motion helpers ────────────────────────────────────────────────────
 
-    def move_ptp(self, target_pose):
-        """PTP approach to first waypoint."""
-        move_client = ActionClient(self, MoveGroup, '/move_action')
-        move_client.wait_for_server()
-
-        goal = MoveGroup.Goal()
-        goal.request.group_name = "ur_arm"
-        goal.request.num_planning_attempts = 30
-        goal.request.allowed_planning_time  = 15.0
-        goal.request.max_velocity_scaling_factor     = 0.3
-        goal.request.max_acceleration_scaling_factor = 0.3
-
-        c  = Constraints()
-        pc = PositionConstraint()
-        pc.header.frame_id = "base_link"
-        pc.link_name       = "tool_tip"
-        sphere             = SolidPrimitive()
-        sphere.type        = SolidPrimitive.SPHERE
-        sphere.dimensions  = [0.01]
-        pc.constraint_region.primitives.append(sphere)
-        pc.constraint_region.primitive_poses.append(target_pose)
-        pc.weight = 1.0
-        c.position_constraints.append(pc)
-
-        oc = OrientationConstraint()
-        oc.header.frame_id = "base_link"
-        oc.link_name       = "tool_tip"
-        oc.orientation     = target_pose.orientation
-        oc.absolute_x_axis_tolerance = 0.5
-        oc.absolute_y_axis_tolerance = 0.5
-        oc.absolute_z_axis_tolerance = 6.28
-        oc.weight = 0.5
-        c.orientation_constraints.append(oc)
-
-        goal.request.goal_constraints.append(c)
-
-        future = move_client.send_goal_async(goal)
-        rclpy.spin_until_future_complete(self, future, timeout_sec=20.0)
-        if not future.done():
-            print("ERROR: PTP goal send timed out")
-            return False
-        gh = future.result()
-        if not gh.accepted:
-            print("ERROR: PTP goal rejected")
-            return False
-
-        rf = gh.get_result_async()
-        rclpy.spin_until_future_complete(self, rf, timeout_sec=30.0)
-        if not rf.done():
-            print("ERROR: PTP result timed out")
-            return False
-        result = rf.result()
-        if result.result.error_code.val != 1:
-            print(f"ERROR: PTP failed (code {result.result.error_code.val})")
-            return False
-
-        print("SUCCESS: PTP approach complete")
-        return True
+    # def move_ptp(self, target_pose):
+    #     """PTP approach to first waypoint."""
+    #     move_client = ActionClient(self, MoveGroup, '/move_action')
+    #     move_client.wait_for_server()
+    #
+    #     goal = MoveGroup.Goal()
+    #     goal.request.group_name = "ur_arm"
+    #     goal.request.num_planning_attempts = 30
+    #     goal.request.allowed_planning_time  = 15.0
+    #     goal.request.max_velocity_scaling_factor     = 0.3
+    #     goal.request.max_acceleration_scaling_factor = 0.3
+    #
+    #     c  = Constraints()
+    #     pc = PositionConstraint()
+    #     pc.header.frame_id = "base_link"
+    #     pc.link_name       = "tool_tip"
+    #     sphere             = SolidPrimitive()
+    #     sphere.type        = SolidPrimitive.SPHERE
+    #     sphere.dimensions  = [0.01]
+    #     pc.constraint_region.primitives.append(sphere)
+    #     pc.constraint_region.primitive_poses.append(target_pose)
+    #     pc.weight = 1.0
+    #     c.position_constraints.append(pc)
+    #
+    #     oc = OrientationConstraint()
+    #     oc.header.frame_id = "base_link"
+    #     oc.link_name       = "tool_tip"
+    #     oc.orientation     = target_pose.orientation
+    #     oc.absolute_x_axis_tolerance = 0.5
+    #     oc.absolute_y_axis_tolerance = 0.5
+    #     oc.absolute_z_axis_tolerance = 6.28
+    #     oc.weight = 0.5
+    #     c.orientation_constraints.append(oc)
+    #
+    #     goal.request.goal_constraints.append(c)
+    #
+    #     future = move_client.send_goal_async(goal)
+    #     rclpy.spin_until_future_complete(self, future, timeout_sec=20.0)
+    #     if not future.done():
+    #         print("ERROR: PTP goal send timed out")
+    #         return False
+    #     gh = future.result()
+    #     if not gh.accepted:
+    #         print("ERROR: PTP goal rejected")
+    #         return False
+    #
+    #     rf = gh.get_result_async()
+    #     rclpy.spin_until_future_complete(self, rf, timeout_sec=30.0)
+    #     if not rf.done():
+    #         print("ERROR: PTP result timed out")
+    #         return False
+    #     result = rf.result()
+    #     if result.result.error_code.val != 1:
+    #         print(f"ERROR: PTP failed (code {result.result.error_code.val})")
+    #         return False
+    #
+    #     print("SUCCESS: PTP approach complete")
+    #     return True
 
     def get_final_robot_state(self, trajectory):
         """Extract the final RobotState from a planned trajectory for use as a start state."""
@@ -177,7 +184,7 @@ class GCodeExecutor(Node):
         rs.joint_state.velocity = list(last_pt.velocities) if last_pt.velocities else []
         return rs
 
-    def plan_cartesian_segment(self, end_pose, velocity_scale=DEFAULT_VELOCITY,
+    def plan_cartesian_segment(self, end_pose, velocity_scale=TRAVEL_VELOCITY,
                                start_state=None):
         """
         Plan a single straight-line Cartesian segment.
@@ -211,17 +218,66 @@ class GCodeExecutor(Node):
         return response.solution
 
 
-    def execute_trajectory(self, trajectory, timeout_sec=30.0):
-        """Execute a pre-planned RobotTrajectory. Returns True on success."""
+    def execute_trajectory(self, trajectory, timeout_sec=30.0,
+                           klipper=None, extrude_mm=0.0, velocity_scale=1.0, extrude_pub=None):
+        """Execute a pre-planned RobotTrajectory. Fires Klipper extrusion right before motion starts."""
         # Estimate a reasonable timeout from trajectory duration + buffer
         pts = trajectory.joint_trajectory.points
         if pts:
             last_t = pts[-1].time_from_start
+            # MoveIt already scales timestamps to match velocity_scale — use directly
             traj_secs = last_t.sec + last_t.nanosec * 1e-9
             timeout_sec = max(timeout_sec, traj_secs * 3.0 + 5.0)
+        else:
+            traj_secs = 0.0
+
+        # Calculate feedrate so Klipper finishes extrusion when arm arrives,
+        # but clamp to [KLIPPER_MIN_FEEDRATE, KLIPPER_FEEDRATE] to protect the extruder motor
+        if extrude_mm > 0 and traj_secs > 0:
+            feedrate = (extrude_mm / traj_secs) * 60.0
+            feedrate = max(KLIPPER_MIN_FEEDRATE, min(KLIPPER_FEEDRATE, feedrate))
+        else:
+            feedrate = KLIPPER_FEEDRATE
 
         goal = ExecuteTrajectory.Goal()
         goal.trajectory = trajectory
+
+        # Fire extrusion in a BACKGROUND THREAD — Moonraker's /printer/gcode/script
+        # is synchronous (blocks until Klipper finishes). Running it in a thread
+        # lets the arm start moving immediately at the same time.
+        if extrude_mm > 0:
+            if extrude_pub is not None:
+                from std_msgs.msg import Float64
+                msg = Float64()
+                msg.data = extrude_mm
+                extrude_pub.publish(msg)
+            if klipper is not None:
+                import threading
+                MAX_CHUNK_MM = 50.0
+
+                # Split into ≤50mm chunks.  Each send_extrusion() call blocks until
+                # Klipper finishes that chunk, so sequencing them naturally gives
+                # gapless, continuously-timed extrusion.
+                chunks = []
+                remaining = extrude_mm
+                while remaining > 1e-6:
+                    chunk = min(MAX_CHUNK_MM, remaining)
+                    chunks.append(chunk)
+                    remaining -= chunk
+
+                # feedrate is per-chunk (mm/min) — each chunk runs at the same rate
+                # so total duration = sum(chunk/feedrate*60) = extrude_mm/feedrate*60 = traj_secs
+                print(f"  Extruding {extrude_mm:.2f} mm in {len(chunks)} chunk(s) "
+                      f"at {feedrate:.0f} mm/min over {traj_secs:.1f}s")
+
+                def _send_chunks(klipper, chunks, feedrate):
+                    for chunk in chunks:
+                        klipper.send_extrusion(chunk, feedrate=feedrate)
+
+                t = threading.Thread(target=_send_chunks,
+                                     args=(klipper, chunks, feedrate),
+                                     daemon=True)
+                t.start()
 
         send_future = self.execute_client.send_goal_async(goal)
         rclpy.spin_until_future_complete(self, send_future, timeout_sec=10.0)
@@ -313,9 +369,22 @@ def load_waypoints(csv_file):
                 continue
             try:
                 x, y, z, qx, qy, qz, qw = [float(v) for v in row[:7]]
-                e = float(row[7]) if len(row) >= 8 else EXTRUDE_PER_POINT
-                v = float(row[8]) if len(row) >= 9 else DEFAULT_VELOCITY
                 poses.append(make_pose(x, y, z, qx, qy, qz, qw))
+                
+                if len(row) >= 8:
+                    e = float(row[7])
+                else:
+                    if len(poses) > 1:
+                        prev = poses[-2]
+                        dx = x - prev.position.x
+                        dy = y - prev.position.y
+                        dz = z - prev.position.z
+                        dist_mm = math.sqrt(dx*dx + dy*dy + dz*dz) * 1000.0
+                        e = dist_mm * EXTRUDE_MULTIPLIER
+                    else:
+                        e = 0.0
+
+                v = float(row[8]) if len(row) >= 9 else (EXTRUDING_VELOCITY if e > 0 else TRAVEL_VELOCITY)
                 extrudes.append(e)
                 velocities.append(max(0.01, min(1.0, v)))  # clamp 0.01–1.0
             except ValueError:
@@ -358,7 +427,7 @@ def main():
                                    _gcode_mod.QZ, _gcode_mod.QW))
             e = p['e_delta'] if _gcode_mod.EXTRUDE_MM == 'auto' else float(_gcode_mod.EXTRUDE_MM)
             extrudes.append(e)
-            velocities.append(_gcode_mod.VELOCITY_SCALE)
+            velocities.append(EXTRUDING_VELOCITY if e > 0 else TRAVEL_VELOCITY)
         csv_file = input_file   # just for display
     else:
         poses, extrudes, velocities = load_waypoints(input_file)
@@ -371,19 +440,46 @@ def main():
 
     print(f"Loaded {len(poses)} waypoints from: {csv_file}")
     print(f"Position tolerance: {POSITION_TOLERANCE*1000:.1f} mm")
-    print(f"Default extrusion:  {EXTRUDE_PER_POINT} mm per point")
-    print(f"Default velocity:   {DEFAULT_VELOCITY*100:.0f}% of max")
+    print(f"Extrude multiplier: {EXTRUDE_MULTIPLIER} (distance × multiplier)")
+    print(f"Extruding velocity: {EXTRUDING_VELOCITY*100:.0f}% of max  |  Travel velocity: {TRAVEL_VELOCITY*100:.0f}% of max")
 
-    # ── Step 1: PTP approach to first waypoint ──────────────────────────
+    # ── Step 1: Cartesian approach to first waypoint ─────────────────────
     print(f"\n{'='*55}")
-    print(f"Step 1: PTP approach to waypoint 0")
+    print(f"Step 1: Cartesian approach to waypoint 0")
     print(f"{'='*55}")
-    print(f"  Target: ({poses[0].position.x:.4f}, "
-                       f"{poses[0].position.y:.4f}, "
-                       f"{poses[0].position.z:.4f})")
+    cur = node.get_tcp_position()
+    if cur:
+        print(f"  Current: ({cur[0]*1000:.1f}, {cur[1]*1000:.1f}, {cur[2]*1000:.1f}) mm")
+    else:
+        print(f"  Current: (unknown — TF not available)")
+    print(f"  Target:  ({poses[0].position.x*1000:.1f}, "
+                       f"{poses[0].position.y*1000:.1f}, "
+                       f"{poses[0].position.z*1000:.1f}) mm")
 
-    if not node.move_ptp(poses[0]):
-        print("Failed to reach start position.")
+    try:
+        ans = input("\nPress ENTER to move robot to start position, or 'q' + ENTER to quit: ")
+    except EOFError:
+        # stdin is not interactive (e.g. launched via ros2 run / launch file)
+        # — abort instead of silently proceeding.
+        print("ERROR: No interactive stdin available. Aborting for safety.")
+        klipper.close()
+        rclpy.shutdown()
+        return
+    if ans.strip().lower() == 'q':
+        print("Aborted by user.")
+        klipper.close()
+        rclpy.shutdown()
+        return
+
+    traj0 = node.plan_cartesian_segment(poses[0], TRAVEL_VELOCITY, start_state=None)
+    if traj0 is not None:
+        ok0 = node.execute_trajectory(traj0)
+    else:
+        ok0 = False
+
+    if not ok0:
+        print("ERROR: Cartesian approach to start position failed.")
+        klipper.close()
         rclpy.shutdown()
         return
 
@@ -445,7 +541,10 @@ def main():
     try:
         ans = input("\nPress ENTER to start execution, or type 'q' + ENTER to quit: ")
     except EOFError:
-        ans = ""
+        print("ERROR: No interactive stdin available. Aborting for safety.")
+        klipper.close()
+        rclpy.shutdown()
+        return
     if ans.strip().lower() == 'q':
         print("Aborted by user.")
         klipper.close()
@@ -462,25 +561,26 @@ def main():
     for i, traj in enumerate(trajectories):
         waypoint_idx = i + 1
         target = poses[waypoint_idx]
+        
         print(f"\nExecuting segment {waypoint_idx}/{len(poses)-1}: "
               f"({target.position.x:.4f}, "
                f"{target.position.y:.4f}, "
                f"{target.position.z:.4f})")
 
-        ok = node.execute_trajectory(traj)
-        if not ok:
-            # Cartesian execution failed (timeout or rejection) — fall back to PTP.
-            # PTP plans in joint space so it avoids Cartesian singularities.
-            print(f"  → Falling back to PTP for segment {waypoint_idx}...")
-            ok = node.move_ptp(target)
-            if not ok:
-                print(f"  WARNING: PTP fallback also failed — skipping segment {waypoint_idx}.")
-                skip_count += 1
-                continue
+        ok = node.execute_trajectory(
+            traj,
+            klipper=klipper,
+            extrude_mm=extrudes[waypoint_idx],
+            velocity_scale=velocities[waypoint_idx],
+            extrude_pub=node.extrude_pub
+        )
 
-        extruded = node.trigger_extrusion(extrudes[waypoint_idx],
-                                          waypoint_idx, target, klipper)
-        if extruded:
+        if not ok:
+            print(f"  WARNING: Execution failed for segment {waypoint_idx} — skipping.")
+            skip_count += 1
+            continue
+
+        if extrudes[waypoint_idx] > 0:
             success_count += 1
 
 
