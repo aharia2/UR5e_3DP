@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5e">
+
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+  <xacro:arg name="name" default="ur"/>
+  <xacro:arg name="ur_type" default="ur5e"/>
+  
+  <xacro:ur_robot
+    name="$(arg name)"
+    tf_prefix=""
+    parent="world"
+    joint_limits_parameters_file="$(find ur_description)/config/ur5e/joint_limits.yaml"
+    kinematics_parameters_file="$(find ur_description)/config/ur5e/default_kinematics.yaml"
+    physical_parameters_file="$(find ur_description)/config/ur5e/physical_parameters.yaml"
+    visual_parameters_file="$(find ur_description)/config/ur5e/visual_parameters.yaml"
+
+    safety_limits="false"
+    safety_pos_margin="0.15"
+    safety_k_position="20"
+  >
+    <!-- After +90° X rotation, stand height = STL Y dim = 862.75mm = 0.863m -->
+    <origin xyz="0 0 0.863" rpy="0 0 0" />
+  </xacro:ur_robot>
+
+  <link name="world" />
+
+  <!-- Robot stand: STL visual, box collision -->
+  <link name="stand">
+    <visual>
+      <geometry>
+        <!-- STL is in mm, scale to meters -->
+        <mesh filename="package://ur5e_description/meshes/VentionAssembly.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    <!-- BASE: full footprint, lower 216mm (0.863 - 0.646 = 0.216m)         -->
+    <!-- STL Y range: 4.80 to 221.11mm  -> center Y = 0.113m               -->
+    <!-- STL X/Z: full width/depth, centers at 0.380 / 0.419m               -->
+    <collision>
+      <origin xyz="0.380 0.113 0.419" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.728 0.216 0.820"/>
+      </geometry>
+    </collision>
+
+    <!-- PILLAR: 8.5" x 8.5" (0.216m sq), top 25.45" (0.646m tall)         -->
+    <!-- STL Y range: 221.11 to 867.55mm -> center Y = 0.544m               -->
+    <!-- Centered in XZ at stand center (0.380 / 0.419m)                    -->
+    <collision>
+      <origin xyz="0.380 0.544 0.419" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.24 0.646 0.24"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Fix stand to world at floor level -->
+  <joint name="world_to_stand" type="fixed">
+    <parent link="world"/>
+    <child link="stand"/>
+    <!-- Rotation: +90° about X makes STL Y-up become World Z-up             -->
+    <!-- XY offsets center the mesh (STL X center=380mm, STL Z center=419mm) -->
+    <!-- Z offset puts the stand bottom at z=0 (STL Y min=4.80mm)            -->
+    <!-- If stand is still wrong: try rpy="-1.5708 0 0" or "0 1.5708 0"       -->
+    <origin xyz="-0.380 0.419 -0.005" rpy="1.5708 0 0"/>
+  </joint>
+
+  <link name="floor">
+    <visual>
+      <geometry>
+        <box size="3.048 3.048 0.0254"/>
+      </geometry>
+      <material name="floor_color">
+        <color rgba="0.3 0.3 0.3 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="3.048 3.048 0.0254"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="world_to_floor" type="fixed">
+    <parent link="world"/>
+    <child link="floor"/>
+    <origin xyz="0 0 -0.0127" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tool_head">
+    <visual>
+      <geometry>
+        <mesh filename="package://ur5e_description/meshes/Toolhead_V3_Assembly.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white">
+        <color rgba="1 1 1 1"/>
+      </material>
+    </visual>
+    
+    <collision>
+      <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.21 0.15"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <joint name="tool_head_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="tool_head"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="tool_tip">
+    <visual>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1 0 0 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="tool_tip_joint" type="fixed">
+    <parent link="tool_head"/>
+    <child link="tool_tip"/>
+    <origin xyz="0 -0.185928 0.009144" rpy="0 0 0"/>
+  </joint>
+
+</robot>

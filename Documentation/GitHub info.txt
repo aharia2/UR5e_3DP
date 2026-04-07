@@ -1,0 +1,35 @@
+PULL FROM GITHUB
+cd ~/UR5e_3DP
+git pull origin main          # get latest from main
+git checkout <BRANCH>
+git pull origin <BRANCH>
+
+PUSH CURRENT WORK TO GITHUB
+cd ~/UR5e_3DP
+git add .                     # stage all new and modified files
+git commit -m "describe what you changed"
+git push origin <BRANCH>
+
+CREATE NEW BRANCH
+git checkout -b <BRANCH>
+git push -u origin <BRANCH>
+
+SWITCH TO BRANCH
+git checkout <BRANCH>
+git push origin <BRANCH>
+
+-----------------------------------------------------------
+
+IANS COMMANDS
+cd ~/UR5e_3DP
+git pull origin main          # get latest from main
+git checkout Ian
+git pull origin Ian
+
+cd ~/UR5e_3DP
+git add .                     # stage all new and modified files
+git commit -m "describe what you changed"
+git push origin Ian
+
+
+

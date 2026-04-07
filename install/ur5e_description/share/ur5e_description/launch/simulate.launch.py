@@ -1,1 +1,0 @@
-/home/ah66586/ros2_ws/UR5e_3DP/src/ur5e_description/launch/simulate.launch.py
