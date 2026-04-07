@@ -1,0 +1,53 @@
+﻿Gcode interpreter:
+
+
+I would like to make a gcode interpreter. The script should be a python script that parses through a given gcode file and outputs a series of values in a csv format. For every “point” I would like to extract X, Y, Z, Orientation(QX, QY, QZ, QW), Toolhead Speed, Extrusion Length, Extrusion Speed, and Move type. Additionally, I would like to group the points into continuous segments.
+
+
+Important Units: The X,Y,Z coordinates are all in millimeters. The E, which is extrusion length is also in millimeters. The FXXX value is in millimeters per minute.
+
+
+Coordinates: (X,Y,Z)
+The xyz coordinates should be found by using the values in the G1 command. Each G1 line has an X and Y. Most do not have Z, as Z is updated at every layer. So the Z will just be the same Z as the last point unless specified otherwise.
+
+
+Orientation:
+The orientation is not defined in gcode, so for now just use a set of base parameters that can be set at the top of the script.
+
+
+Toolhead Speed:
+Toolhead speed comes from the FXXX command in gcode. Similar to the Z values, it is only in the line when it is changed. So the toolhead speed will just be the same as the last point unless changed. At the beginning of the script, there may be a F0 set speed. This defaults to the machine's speed. The machine default speed can be a parameter set at the top of the script.
+
+
+Extrusion Length:
+Extrusion length is the amount of filament that will be extruded by the extruder over the segment length. It can be found by taking the E value of the current point and subtracting it from the e value of the previous point (since gcode uses total extrusion rate).
+
+
+Extrusion Speed:
+Extrusion speed is the speed of the extruder motor. This is NOT the same as the FXXX line. Instead, it will need to be calculated. Create a vector between the current point and following point. Include 3 dimensions (X,Y,Z) in each point so it is a 3d vector. Then take the magnitude to find the physical distance of the segment. Then using the toolhead speed, calculate the total segment time. Finally, the extrusion length that comes from gcode by the calculated segment time to get the extrusion rate. Please be mindful of the units and output the extrusion speed in millimeters per minute.
+
+
+Move type:
+Move type will either be “extrusion” or “travel”. Extrusion moves are defined as G1 moves that have X and Y and E. Travel moves are G1 moves that have X and Y no Z.
+
+
+General Lines in gcode and how they should be interpreted:
+G1 Commands: “G1”
+* For commands with X and Y, treat as a waypoint
+* For commands with just G1 FXXX, don’t make a waypoint and just update the speed for the following points
+* For commands with only Z, don’t make a waypoint and only update the z counter value for the following points
+* If any command has a speed, update the speed along with following the descriptions above. For example, “G1 X30 Y50 E10 F1000” would be a waypoint and would also update the speed counter
+
+
+G92 commands: “G92 E0”
+* This command sets the total extrusion length back to zero. This should not be interpreted as a waypoint, instead it should reset the “extrusion length” counter back to zero.
+
+
+Comment lines: “;”
+* Ignore these commands, just continue and move on to the next line
+
+
+
+
+Miscellaneous commands: “M190, M104, M109, M82, G21”
+* Ignore these commands, just continue and move on to the next line
