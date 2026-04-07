@@ -1,1 +1,0 @@
-/home/ah66586/ros2_ws/UR5e_3DP/build/ur5e_description/ament_cmake_environment_hooks/local_setup.bash
