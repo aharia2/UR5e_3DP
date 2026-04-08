@@ -1,0 +1,4 @@
+START DEMO
+cd ~/UR5e_3DP/ROS/ROS\ Files
+source install/setup.bash
+ros2 launch ur_cell_config demo.launch.py

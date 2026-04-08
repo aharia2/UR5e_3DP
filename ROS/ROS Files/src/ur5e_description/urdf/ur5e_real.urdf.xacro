@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<!--
+ur5e_real.urdf.xacro
+====================
+Full robot description for the PHYSICAL UR5e.
+
+Identical to ur5e.urdf.xacro (Vention stand + tool head + tool_tip) but
+uses the ur_robot_driver real-hardware ros2_control plugin instead of the
+mock_components plugin used for simulation.
+
+This file is loaded by ur5e_real_rsp.launch.py, which is passed to
+ur_control.launch.py as `description_launchfile`.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ur5e">
+
+  <!-- UR arm: visual, kinematics, collision -->
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
+
+  <!-- Real UR hardware ros2_control interface -->
+  <xacro:include filename="$(find ur_robot_driver)/urdf/ur.ros2_control.xacro" />
+
+  <!-- ── Args expected by ur_rsp.launch.py / ur_control.launch.py ─────────── -->
+  <xacro:arg name="name"               default="ur"/>
+  <xacro:arg name="ur_type"            default="ur5e"/>
+  <xacro:arg name="tf_prefix"          default="" />
+  <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5e/joint_limits.yaml"/>
+  <xacro:arg name="kinematics_params"  default="$(find ur_description)/config/ur5e/default_kinematics.yaml"/>
+  <xacro:arg name="physical_params"    default="$(find ur_description)/config/ur5e/physical_parameters.yaml"/>
+  <xacro:arg name="visual_params"      default="$(find ur_description)/config/ur5e/visual_parameters.yaml"/>
+  <xacro:arg name="safety_limits"      default="false"/>
+  <xacro:arg name="safety_pos_margin"  default="0.15"/>
+  <xacro:arg name="safety_k_position"  default="20"/>
+  <!-- ros2_control / driver args -->
+  <xacro:arg name="headless_mode"           default="false"/>
+  <xacro:arg name="robot_ip"                default="0.0.0.0"/>
+  <xacro:arg name="script_filename"         default=""/>
+  <xacro:arg name="output_recipe_filename"  default=""/>
+  <xacro:arg name="input_recipe_filename"   default=""/>
+  <xacro:arg name="reverse_ip"              default="0.0.0.0"/>
+  <xacro:arg name="script_command_port"     default="50004"/>
+  <xacro:arg name="reverse_port"            default="50001"/>
+  <xacro:arg name="script_sender_port"      default="50002"/>
+  <xacro:arg name="trajectory_port"         default="50003"/>
+  <xacro:arg name="use_mock_hardware"       default="false"/>
+  <xacro:arg name="mock_sensor_commands"    default="false"/>
+  <xacro:arg name="use_tool_communication"  default="false"/>
+  <xacro:arg name="tool_voltage"            default="0"/>
+  <xacro:arg name="tool_parity"             default="0"/>
+  <xacro:arg name="tool_baud_rate"          default="115200"/>
+  <xacro:arg name="tool_stop_bits"          default="1"/>
+  <xacro:arg name="tool_rx_idle_chars"      default="1.5"/>
+  <xacro:arg name="tool_tx_idle_chars"      default="3.5"/>
+  <xacro:arg name="tool_device_name"        default="/tmp/ttyUR"/>
+  <xacro:arg name="tool_tcp_port"           default="54321"/>
+  <xacro:arg name="initial_positions_file"  default="$(find ur_description)/config/initial_positions.yaml"/>
+  <xacro:property name="initial_positions_file" default="$(arg initial_positions_file)"/>
+
+  <!-- ── World + robot arm ───────────────────────────────────────────────── -->
+  <link name="world" />
+
+  <!-- UR5e mounted 0.863 m above world (= top of Vention stand) -->
+  <xacro:ur_robot
+    name="$(arg name)"
+    tf_prefix="$(arg tf_prefix)"
+    parent="world"
+    joint_limits_parameters_file="$(arg joint_limit_params)"
+    kinematics_parameters_file="$(arg kinematics_params)"
+    physical_parameters_file="$(arg physical_params)"
+    visual_parameters_file="$(arg visual_params)"
+    safety_limits="$(arg safety_limits)"
+    safety_pos_margin="$(arg safety_pos_margin)"
+    safety_k_position="$(arg safety_k_position)"
+  >
+    <origin xyz="0 0 0.863" rpy="0 0 0" />
+  </xacro:ur_robot>
+
+  <!-- ── Real hardware ros2_control ─────────────────────────────────────── -->
+  <xacro:ur_ros2_control
+    name="$(arg name)"
+    tf_prefix="$(arg tf_prefix)"
+    kinematics_parameters_file="$(arg kinematics_params)"
+    use_mock_hardware="$(arg use_mock_hardware)"
+    mock_sensor_commands="$(arg mock_sensor_commands)"
+    headless_mode="$(arg headless_mode)"
+    initial_positions="${xacro.load_yaml(initial_positions_file)}"
+    use_tool_communication="$(arg use_tool_communication)"
+    tool_voltage="$(arg tool_voltage)"
+    tool_parity="$(arg tool_parity)"
+    tool_baud_rate="$(arg tool_baud_rate)"
+    tool_stop_bits="$(arg tool_stop_bits)"
+    tool_rx_idle_chars="$(arg tool_rx_idle_chars)"
+    tool_tx_idle_chars="$(arg tool_tx_idle_chars)"
+    tool_device_name="$(arg tool_device_name)"
+    tool_tcp_port="$(arg tool_tcp_port)"
+    robot_ip="$(arg robot_ip)"
+    script_filename="$(arg script_filename)"
+    output_recipe_filename="$(arg output_recipe_filename)"
+    input_recipe_filename="$(arg input_recipe_filename)"
+    reverse_ip="$(arg reverse_ip)"
+    script_command_port="$(arg script_command_port)"
+    reverse_port="$(arg reverse_port)"
+    script_sender_port="$(arg script_sender_port)"
+    trajectory_port="$(arg trajectory_port)"
+  />
+
+  <!-- ── Vention stand ──────────────────────────────────────────────────── -->
+  <link name="stand">
+    <visual>
+      <geometry>
+        <mesh filename="package://ur5e_description/meshes/VentionAssembly.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white"><color rgba="1 1 1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0.380 0.113 0.419" rpy="0 0 0"/>
+      <geometry><box size="0.728 0.216 0.820"/></geometry>
+    </collision>
+    <collision>
+      <origin xyz="0.380 0.544 0.419" rpy="0 0 0"/>
+      <geometry><box size="0.24 0.646 0.24"/></geometry>
+    </collision>
+  </link>
+  <joint name="world_to_stand" type="fixed">
+    <parent link="world"/>
+    <child link="stand"/>
+    <origin xyz="-0.380 0.419 -0.005" rpy="1.5708 0 0"/>
+  </joint>
+
+  <!-- ── Floor ──────────────────────────────────────────────────────────── -->
+  <link name="floor">
+    <visual>
+      <geometry><box size="3.048 3.048 0.0254"/></geometry>
+      <material name="floor_color"><color rgba="0.3 0.3 0.3 1"/></material>
+    </visual>
+    <collision>
+      <geometry><box size="3.048 3.048 0.0254"/></geometry>
+    </collision>
+  </link>
+  <joint name="world_to_floor" type="fixed">
+    <parent link="world"/>
+    <child link="floor"/>
+    <origin xyz="0 0 -0.0127" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── Tool head ──────────────────────────────────────────────────────── -->
+  <link name="tool_head">
+    <visual>
+      <geometry>
+        <mesh filename="package://ur5e_description/meshes/Toolhead_V3_Assembly.STL" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white"><color rgba="1 1 1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 -0.09 0" rpy="0 0 0"/>
+      <geometry><box size="0.15 0.21 0.15"/></geometry>
+    </collision>
+  </link>
+  <joint name="tool_head_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="tool_head"/>
+    <origin xyz="0 0 0" rpy="0 0 3.14159"/>
+  </joint>
+
+  <!-- ── Tool tip (TCP) ─────────────────────────────────────────────────── -->
+  <link name="tool_tip">
+    <visual>
+      <geometry><sphere radius="0.005"/></geometry>
+      <material name="red"><color rgba="1 0 0 1"/></material>
+    </visual>
+  </link>
+  <joint name="tool_tip_joint" type="fixed">
+    <parent link="tool_head"/>
+    <child link="tool_tip"/>
+    <origin xyz="0 -0.185928 0.009144" rpy="0 0 0"/>
+  </joint>
+
+</robot>
