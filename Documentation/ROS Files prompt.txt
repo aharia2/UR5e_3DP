@@ -1,4 +1,15 @@
+BUILD ROS (first time only)
+cd ~/UR5e_3DP/ROS/ros_ws
+rm -rf build install log
+colcon build
+
 START DEMO
-cd ~/UR5e_3DP/ROS/ROS\ Files
-source install/setup.bash
+source /opt/ros/jazzy/setup.bash
+source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash
 ros2 launch ur_cell_config demo.launch.py
+
+START REAL ROBOT
+source /opt/ros/jazzy/setup.bash
+source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash
+ros2 launch ur_cell_config real_robot.launch.py
+
