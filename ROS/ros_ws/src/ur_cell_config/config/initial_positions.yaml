@@ -14,4 +14,4 @@ initial_positions:
   elbow_joint: 1.5708
   wrist_1_joint: 0
   wrist_2_joint: 1.5708
-  wrist_3_joint: 0
+  wrist_3_joint: 3.14159

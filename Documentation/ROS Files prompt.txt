@@ -3,6 +3,9 @@ cd ~/UR5e_3DP/ROS/ros_ws
 rm -rf build install log
 colcon build
 
+REBUILD ROS (when updating urdf and such)
+cd ~/UR5e_3DP/ROS/ros_ws && colcon build
+
 START DEMO
 source /opt/ros/jazzy/setup.bash
 source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash
