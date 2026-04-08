@@ -2,7 +2,7 @@ PULL FROM GITHUB
 cd ~/UR5e_3DP
 git pull origin main          # get latest from main
 git checkout <BRANCH>
-git pull origin <BRANCH>
+git pull origin <BRANCH>		#get latest from branch
 
 PUSH CURRENT WORK TO GITHUB
 cd ~/UR5e_3DP
@@ -24,7 +24,7 @@ IANS COMMANDS
 cd ~/UR5e_3DP
 git pull origin main          # get latest from main
 git checkout Ian
-git pull origin Ian
+git pull origin Ian		#get latest from branch
 
 cd ~/UR5e_3DP
 git add .                     # stage all new and modified files
