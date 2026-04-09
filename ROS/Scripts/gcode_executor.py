@@ -19,8 +19,12 @@ Example
 """
 
 import csv
+import math
 import os
 import sys
+import urllib.parse
+import urllib.request
+import json
 
 import rclpy
 from rclpy.node import Node
@@ -57,6 +61,15 @@ MIN_CARTESIAN_FRACTION = 0.95
 
 # Timeout (seconds) for each planning service call.
 PLANNING_TIMEOUT = 30.0
+
+# ─── Klipper / Moonraker settings ─────────────────────────────────────────────
+
+MOONRAKER_URL = "http://localhost:7125"
+
+# Fixed delay (seconds) inserted at the start of the extrusion script so that
+# Klipper's buffered commands stay in sync with the joint trajectory.
+# Increase if extrusion starts too early; decrease if it starts too late.
+KLIPPER_DELAY_SEC = 0.5
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -168,6 +181,140 @@ def _make_pose(wp: dict) -> Pose:
     pose.orientation.z = wp['qz']
     pose.orientation.w = wp['qw']
     return pose
+
+
+# ════════════════════════════════════════════════════════════════════════════════
+# EXTRUSION LOGIC
+# ════════════════════════════════════════════════════════════════════════════════
+
+class KlipperComm:
+    """Send G-code to Klipper via the Moonraker HTTP API."""
+
+    def __init__(self, url: str = MOONRAKER_URL):
+        self.url = url.rstrip('/')
+
+    def connect(self) -> bool:
+        """Check that Moonraker is reachable and Klipper is ready."""
+        try:
+            with urllib.request.urlopen(f'{self.url}/printer/info', timeout=5) as r:
+                info = json.loads(r.read())
+            state = info.get('result', {}).get('state', 'unknown')
+            print(f'[Klipper] Connected — Moonraker at {self.url}  (state: {state})')
+            return True
+        except Exception as e:
+            print(f'[Klipper] WARNING: Could not reach Moonraker: {e}')
+            return False
+
+    def send_gcode(self, script: str) -> bool:
+        """Send a multi-line G-code script to Klipper's buffer."""
+        try:
+            data = json.dumps({'script': script}).encode()
+            req = urllib.request.Request(
+                f'{self.url}/printer/gcode/script',
+                data=data,
+                headers={'Content-Type': 'application/json'},
+                method='POST',
+            )
+            with urllib.request.urlopen(req, timeout=60) as r:
+                r.read()
+            return True
+        except Exception as e:
+            print(f'[Klipper] ERROR sending G-code: {e}')
+            return False
+
+
+def _segment_waypoint_timestamps(seg: dict) -> list:
+    """
+    Compute the time (seconds, relative to segment start) at which the
+    toolhead reaches each waypoint, using cumulative 3D path distance and
+    the segment's constant toolhead speed.
+
+    Returns a list of floats, one per waypoint (first entry is always 0.0).
+    """
+    wps = seg['waypoints']
+    speed_m_per_s = seg['speed_mm_per_min'] / 60000.0  # mm/min → m/s
+    timestamps = [0.0]
+    for i in range(1, len(wps)):
+        prev, cur = wps[i - 1], wps[i]
+        dx = cur['x'] - prev['x']
+        dy = cur['y'] - prev['y']
+        dz = cur['z'] - prev['z']
+        dist = math.sqrt(dx * dx + dy * dy + dz * dz)  # metres
+        dt = dist / speed_m_per_s if speed_m_per_s > 1e-9 else 0.0
+        timestamps.append(timestamps[-1] + dt)
+    return timestamps
+
+
+def build_extrusion_schedule(segments: list, planned: list) -> list:
+    """
+    Build the global extrusion schedule as a list of (timestamp_sec, gcode) pairs.
+
+    For each extrusion waypoint j (j >= 1) in an extrusion segment, the G1 E
+    command is stamped at the global time of waypoint j-1 — so extrusion starts
+    when the robot leaves the previous waypoint and finishes on arrival at j.
+
+    Travel segments produce no extrusion commands.
+
+    Returns a list of (float, str) sorted by timestamp.
+    """
+    schedule = []
+    cumulative_e = 0.0
+    global_seg_start = 0.0  # seconds
+
+    for seg, traj in zip(segments, planned):
+        # Segment duration from the planned trajectory's final timestamp.
+        seg_duration = 0.0
+        if traj is not None:
+            pts = traj.joint_trajectory.points
+            if pts:
+                t = pts[-1].time_from_start
+                seg_duration = t.sec + t.nanosec * 1e-9
+
+        if seg['move_type'] == 'extrusion':
+            wp_times = _segment_waypoint_timestamps(seg)
+            wps = seg['waypoints']
+            for j in range(1, len(wps)):
+                e_delta = wps[j]['extrusion_mm']
+                if e_delta < 1e-9:
+                    continue
+                cumulative_e += e_delta
+                ext_speed = wps[j]['extrusion_speed']  # mm/min
+                # Stamp at waypoint j-1: extrusion starts here, ends at j.
+                t_stamp = global_seg_start + wp_times[j - 1]
+                schedule.append((t_stamp, f'G1 E{cumulative_e:.4f} F{ext_speed:.4f}'))
+        else:
+            # Travel — no extrusion; still track cumulative E (should be zero deltas).
+            for wp in seg['waypoints']:
+                cumulative_e += wp['extrusion_mm']
+
+        global_seg_start += seg_duration
+
+    return schedule
+
+
+def schedule_to_gcode(schedule: list) -> str:
+    """
+    Convert a list of (timestamp_sec, gcode) pairs into a single G-code script
+    using G4 P<ms> dwell commands to reproduce the timing.
+
+    An initial G4 dwell of KLIPPER_DELAY_SEC is prepended to align Klipper's
+    buffer execution with the start of robot motion.
+    """
+    lines = ['M82']  # absolute extrusion mode
+
+    initial_delay_ms = max(0, int(KLIPPER_DELAY_SEC * 1000))
+    if initial_delay_ms > 0:
+        lines.append(f'G4 P{initial_delay_ms}')
+
+    prev_t = 0.0
+    for t, cmd in schedule:
+        dt_ms = max(0, int((t - prev_t) * 1000))
+        if dt_ms > 0:
+            lines.append(f'G4 P{dt_ms}')
+        lines.append(cmd)
+        prev_t = t
+
+    return '\n'.join(lines)
 
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -461,6 +608,20 @@ class GCodeExecutorNode(Node):
         print(f"  Estimated time     : {h:02d}h {m:02d}m {s:02d}s")
         print(f"{'='*60}")
 
+        # ── Build extrusion schedule ──────────────────────────────────────────
+        print(f"\n{'='*60}")
+        print(f" Building extrusion schedule…")
+        schedule = build_extrusion_schedule(segments, planned)
+        gcode_script = schedule_to_gcode(schedule)
+        print(f"  {len(schedule)} extrusion commands scheduled")
+        print(f"{'='*60}")
+
+        # ── Connect to Klipper ────────────────────────────────────────────────
+        klipper = KlipperComm()
+        klipper_ready = klipper.connect()
+        if not klipper_ready:
+            print('  WARNING: Klipper not reachable — extrusion will be skipped.')
+
         # ── User confirmation ─────────────────────────────────────────────────
         try:
             ans = input("\nPress ENTER to begin execution, or 'q' to quit: ")
@@ -470,10 +631,18 @@ class GCodeExecutorNode(Node):
             print('Aborted by user.')
             return
 
-        # ── Step 3: Execute all segments ──────────────────────────────────────
+        # ── Step 3: Send extrusion script then execute ────────────────────────
         print(f"\n{'='*60}")
         print(f" Step 3: Executing {len(planned)} segments")
         print(f"{'='*60}")
+
+        if klipper_ready and schedule:
+            print('  Sending extrusion script to Klipper…', end='', flush=True)
+            if klipper.send_gcode(gcode_script):
+                print('  OK')
+            else:
+                print('  FAILED — continuing without extrusion.')
+                klipper_ready = False
 
         ok_count   = 0
         skip_count = 0
@@ -491,20 +660,6 @@ class GCodeExecutorNode(Node):
                 print('    Already at target — skipping.')
                 skip_count += 1
                 continue
-
-            # ══════════════════════════════════════════════════════════════════
-            # EXTRUSION LOGIC
-            # ══════════════════════════════════════════════════════════════════
-            # Klipper extrusion commands will be sent here, synchronised with
-            # the trajectory execution below.
-            #
-            # Available parameters for this segment:
-            #   seg['total_extrusion']       – total filament to push (mm)
-            #   seg['waypoints'][i]['extrusion_mm']    – per-waypoint delta (mm)
-            #   seg['waypoints'][i]['extrusion_speed'] – extruder speed (mm/min)
-            #
-            # Implementation to be added in a future update.
-            # ══════════════════════════════════════════════════════════════════
 
             ok = self.execute_trajectory(traj)
             if not ok:
