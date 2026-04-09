@@ -1,7 +1,8 @@
 USE GCODE EXECUTOR on file
 source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash && cd ~/UR5e_3DP/ROS/Scripts && python3 gcode_executor.py "gcode_interpreted files/40x40x40.transformed.csv"
 
-USE bed transform
+USE BED TRANSFORM
 source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash && cd ~/UR5e_3DP/ROS/Scripts && python3 bed_transform.py "gcode_interpreted files/40x40x40.csv"
 
-
+USE GCODE INTERPRETER
+source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash && cd ~/UR5e_3DP/ROS/Scripts && python3 gcode_interpreter.py "../../Gcode Test Files/40x40x40.gcode"
