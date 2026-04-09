@@ -41,8 +41,12 @@ from shape_msgs.msg import SolidPrimitive
 # Adjust this to match the actual maximum configured speed of your MoveIt setup.
 MAX_SPEED_MM_PER_MIN = 6000.0
 
+# Acceleration scaling factor applied to all Cartesian moves (0.0 – 1.0).
+# Set independently of velocity_scale. 1.0 = MoveIt's configured maximum.
+ACCELERATION_SCALE = 0.5
+
 # Cartesian path interpolation step (metres).  Smaller = smoother, slower to plan.
-CARTESIAN_STEP = 0.005
+CARTESIAN_STEP = 0.001
 
 # Jump threshold for GetCartesianPath.  4.0 is a safe default.
 CARTESIAN_JUMP_THRESHOLD = 4.0
@@ -235,7 +239,7 @@ class GCodeExecutorNode(Node):
         req.jump_threshold  = CARTESIAN_JUMP_THRESHOLD
         req.avoid_collisions = True
         req.max_velocity_scaling_factor     = float(velocity_scale)
-        req.max_acceleration_scaling_factor = float(velocity_scale)
+        req.max_acceleration_scaling_factor = float(ACCELERATION_SCALE)
         if start_state is not None:
             req.start_state = start_state
 
