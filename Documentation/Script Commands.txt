@@ -6,3 +6,7 @@ source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.b
 
 USE GCODE INTERPRETER
 source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash && cd ~/UR5e_3DP/ROS/Scripts && python3 gcode_interpreter.py "../../Gcode Test Files/40x40x40.gcode"
+
+USE JOG
+source /opt/ros/jazzy/setup.bash && source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash && cd ~/UR5e_3DP/ROS/Scripts && python3 ~/UR5e_3DP/ROS/Scripts/jog_nozzle.py
+

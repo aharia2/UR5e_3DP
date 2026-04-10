@@ -31,9 +31,9 @@ import sys
 # ─── Bed origin settings ──────────────────────────────────────────────────────
 # Position of the gcode origin (0, 0, 0) in the robot's base_link frame.
 # Units: metres.  Adjust these to match your physical setup.
-BED_ORIGIN_X =  0.300   # metres
+BED_ORIGIN_X =  0.500   # metres
 BED_ORIGIN_Y =  0.000   # metres
-BED_ORIGIN_Z =  0.100   # metres
+BED_ORIGIN_Z =  0.0788   # metres
 
 # ─── Future: bed orientation ──────────────────────────────────────────────────
 # Bed tilt and nozzle-normal orientation will be added here in a future update.
