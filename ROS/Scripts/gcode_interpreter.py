@@ -39,11 +39,11 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gcode_int
 # Output filename matches the input gcode filename with a .csv extension
 OUTPUT_CSV = None  # resolved at runtime from input filename
 
-# Tool orientation quaternion (tool pointing straight down)
-QX = 0.70711
-QY = 0.00056
-QZ = 0.00056
-QW = 0.70711
+# Tool orientation quaternion (matches Print start position)
+QX = 0.5
+QY = 0.5
+QZ = 0.5
+QW = 0.5
 
 # Machine default toolhead speed (mm/min) used when F is 0 or not yet set
 DEFAULT_SPEED_MM_PER_MIN = 1000.0
