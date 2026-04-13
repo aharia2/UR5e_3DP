@@ -16,3 +16,12 @@ source /opt/ros/jazzy/setup.bash
 source ~/UR5e_3DP/ROS/ros_ws/install/setup.bash
 ros2 launch ur_cell_config real_robot.launch.py
 
+FIREWALL DISABLE
+sudo ufw disable
+
+sudo ip addr flush dev enx00e04c68446f
+sudo ip addr add 169.254.107.10/16 dev enx00e04c68446f
+sudo ip link set enx00e04c68446f up
+ping 169.254.107.107  # verify connection
+
+

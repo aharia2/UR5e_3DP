@@ -25,34 +25,52 @@ Example
 """
 
 import csv
+import math
 import os
 import sys
 
 # ─── Bed origin settings ──────────────────────────────────────────────────────
 # Position of the gcode origin (0, 0, 0) in the robot's base_link frame.
 # Units: metres.  Adjust these to match your physical setup.
-BED_ORIGIN_X =  0.500   # metres
-BED_ORIGIN_Y =  0.000   # metres
-BED_ORIGIN_Z =  0.0788   # metres
+BED_ORIGIN_X =  -0.748   # metres
+BED_ORIGIN_Y =  -0.25   # metres
+BED_ORIGIN_Z =  -0.5305   # metres
 
-# ─── Future: bed orientation ──────────────────────────────────────────────────
-# Bed tilt and nozzle-normal orientation will be added here in a future update.
-# When implemented, this section will:
-#   - Accept a bed normal vector or rotation (roll, pitch, yaw)
-#   - Rotate every XYZ point into the tilted bed frame
-#   - Update QX/QY/QZ/QW so the nozzle stays perpendicular to the bed surface
-# ──────────────────────────────────────────────────────────────────────────────
+# ─── Nozzle orientation override ─────────────────────────────────────────────
+# Set OVERRIDE_ORIENTATION = True to replace every waypoint's quaternion with
+# the values below.  Leave False to keep the orientations from the interpreter.
+# Units: unit quaternion (will be normalised automatically).
+OVERRIDE_ORIENTATION = True
+
+TARGET_QX =  0.5
+TARGET_QY =  -0.5
+TARGET_QZ =  -0.5   #change z to change the orientation abotu z axis
+TARGET_QW =  0.5
+# ─────────────────────────────────────────────────────────────────────────────
 
 
 def transform_csv(in_path: str, out_path: str) -> int:
     """
     Read *in_path*, shift every X/Y/Z by the bed origin offset, write *out_path*.
+    If OVERRIDE_ORIENTATION is True, replaces QX/QY/QZ/QW on every waypoint.
     Returns the number of waypoints transformed.
     """
     # Convert bed origin from metres to mm to match CSV units
     dx = BED_ORIGIN_X * 1000.0
     dy = BED_ORIGIN_Y * 1000.0
     dz = BED_ORIGIN_Z * 1000.0
+
+    # Normalise the override quaternion once
+    if OVERRIDE_ORIENTATION:
+        mag = math.sqrt(TARGET_QX**2 + TARGET_QY**2 + TARGET_QZ**2 + TARGET_QW**2)
+        if mag < 1e-9:
+            raise ValueError('TARGET quaternion has zero magnitude.')
+        q_str = [
+            f'{TARGET_QX / mag:.6f}',
+            f'{TARGET_QY / mag:.6f}',
+            f'{TARGET_QZ / mag:.6f}',
+            f'{TARGET_QW / mag:.6f}',
+        ]
 
     output_rows = []
     count       = 0
@@ -78,9 +96,12 @@ def transform_csv(in_path: str, out_path: str) -> int:
                 output_rows.append(raw_row)
                 continue
 
+            orientation = q_str if OVERRIDE_ORIENTATION else row[3:7]
+
             transformed = [
                 f"{x:.4f}", f"{y:.4f}", f"{z:.4f}",
-                *row[3:]   # QX QY QZ QW, speeds, move_type, segment_id, gcode_line
+                *orientation,  # QX QY QZ QW
+                *row[7:]       # speeds, move_type, segment_id, gcode_line
             ]
             output_rows.append(transformed)
             count += 1
@@ -117,6 +138,11 @@ def main():
           f'ΔX={BED_ORIGIN_X*1000:.2f} mm  '
           f'ΔY={BED_ORIGIN_Y*1000:.2f} mm  '
           f'ΔZ={BED_ORIGIN_Z*1000:.2f} mm')
+    if OVERRIDE_ORIENTATION:
+        print(f'Orientation override: QX={TARGET_QX}  QY={TARGET_QY}  '
+              f'QZ={TARGET_QZ}  QW={TARGET_QW}')
+    else:
+        print('Orientation: preserved from interpreter CSV')
 
     count = transform_csv(in_path, out_path)
     print(f'Transformed {count} waypoints → {out_path}')

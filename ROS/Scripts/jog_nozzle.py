@@ -22,14 +22,14 @@ from moveit_msgs.msg import DisplayTrajectory
 
 # ── Target position — edit these ──────────────────────────────────────────────
 
-TARGET_X = 0.5      # metres
-TARGET_Y = 0.0      # metres
-TARGET_Z = 0.0785     # metres
+TARGET_X = -0.748      # metres
+TARGET_Y = -0.25      # metres
+TARGET_Z = -.5305     # metres
 
 # Nozzle-down orientation (matches initial_positions.yaml / real robot)
 TARGET_QX = 0.5
-TARGET_QY = 0.5
-TARGET_QZ = 0.5
+TARGET_QY = -0.5
+TARGET_QZ = -0.5    #edit this one to change the orientation about the z axis
 TARGET_QW = 0.5
 
 # Speed as a fraction of the robot's maximum (0.0 – 1.0)
