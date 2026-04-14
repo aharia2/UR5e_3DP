@@ -24,7 +24,7 @@ M107 ; disable fan
 ;LAYER_CHANGE
 ;Z:0.45
 ;HEIGHT:0.45
-G1 X63.109 Y85.967 F60 ; move to first layer point
+G1 X63.109 Y85.967 F3000 ; move to first layer point
 G1 Z.45 ; move to first layer point
 ;TYPE:Skirt/Brim
 ;WIDTH:0.7
@@ -1804,7 +1804,7 @@ G1 X91.067 Y100.579 E2.56279 ; infill
 ;LAYER_CHANGE
 ;Z:0.9
 ;HEIGHT:0.45
-G1 Z.9 F60 ; simple layer change
+G1 Z.9 F3000 ; simple layer change
 M104 S210 ; set temperature
 G92 E0 ; reset extrusion distance
 G1 X115.964 Y98.926 ; travel to first layer point
@@ -3144,7 +3144,7 @@ M107 ; disable fan
 ;LAYER_CHANGE
 ;Z:1.35
 ;HEIGHT:0.45
-G1 Z1.35 F60 ; simple layer change
+G1 Z1.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X67.384 Y97.018 ; travel to first layer point
 ;TYPE:Perimeter
@@ -3944,7 +3944,7 @@ G1 X110.423 Y93.635 E3.51964 ; infill
 ;LAYER_CHANGE
 ;Z:1.8
 ;HEIGHT:0.45
-G1 Z1.8 F60 ; simple layer change
+G1 Z1.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X72.727 Y91.386 ; travel to first layer point
 ;TYPE:Perimeter
@@ -5581,7 +5581,7 @@ G1 X114.077 Y102.99 E1.07405 ; infill
 ;LAYER_CHANGE
 ;Z:2.25
 ;HEIGHT:0.45
-G1 Z2.25 F60 ; simple layer change
+G1 Z2.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X66.961 Y103.002 ; travel to first layer point
 ;TYPE:Perimeter
@@ -5783,7 +5783,7 @@ G1 X67.14 Y95.586 E.30335 ; infill
 ;LAYER_CHANGE
 ;Z:2.7
 ;HEIGHT:0.45
-G1 Z2.7 F60 ; simple layer change
+G1 Z2.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X74.26 Y109.248 ; travel to first layer point
 ;TYPE:Perimeter
@@ -5996,7 +5996,7 @@ G1 X107.53 Y109.538 E30.10861 ; infill
 ;LAYER_CHANGE
 ;Z:3.15
 ;HEIGHT:0.45
-G1 Z3.15 F60 ; simple layer change
+G1 Z3.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X68.873 Y98.117 ; travel to first layer point
 ;TYPE:Perimeter
@@ -6202,7 +6202,7 @@ G1 X118.373 Y101.305 E29.95114 ; infill
 ;LAYER_CHANGE
 ;Z:3.6
 ;HEIGHT:0.45
-G1 Z3.6 F60 ; simple layer change
+G1 Z3.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X92.092 Y88.819 ; travel to first layer point
 ;TYPE:Perimeter
@@ -6423,7 +6423,7 @@ M107 ; disable fan
 ;LAYER_CHANGE
 ;Z:4.05
 ;HEIGHT:0.45
-G1 Z4.05 F60 ; simple layer change
+G1 Z4.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X106.384 Y111.152 ; travel to first layer point
 ;TYPE:Perimeter
@@ -6632,7 +6632,7 @@ G1 X66.31 Y94.756 E.55831 ; infill
 ;LAYER_CHANGE
 ;Z:4.5
 ;HEIGHT:0.45
-G1 Z4.5 F60 ; simple layer change
+G1 Z4.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.883 Y88.316 ; travel to first layer point
 ;TYPE:Perimeter
@@ -6860,7 +6860,7 @@ G1 X105.553 Y111.515 E33.816 ; infill
 ;LAYER_CHANGE
 ;Z:4.95
 ;HEIGHT:0.45
-G1 Z4.95 F60 ; simple layer change
+G1 Z4.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X103.355 Y87.568 ; travel to first layer point
 ;TYPE:Perimeter
@@ -7119,7 +7119,7 @@ G1 X66.957 Y99.946 E1.1857 ; infill
 ;LAYER_CHANGE
 ;Z:5.4
 ;HEIGHT:0.45
-G1 Z5.4 F60 ; simple layer change
+G1 Z5.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X108.895 Y111.348 ; travel to first layer point
 ;TYPE:Perimeter
@@ -7393,7 +7393,7 @@ G1 X67.674 Y99.637 E2.51769 ; infill
 ;LAYER_CHANGE
 ;Z:5.85
 ;HEIGHT:0.45
-G1 Z5.85 F60 ; simple layer change
+G1 Z5.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.51 Y87.027 ; travel to first layer point
 ;TYPE:Perimeter
@@ -7652,7 +7652,7 @@ G1 X66.685 Y101.801 E1.21762 ; infill
 ;LAYER_CHANGE
 ;Z:6.3
 ;HEIGHT:0.45
-G1 Z6.3 F60 ; simple layer change
+G1 Z6.3 F3000 ; simple layer change
 G1 X67.252 Y101.346 ; travel to first layer point
 ;TYPE:External perimeter
 ;WIDTH:0.7
@@ -7944,7 +7944,7 @@ G1 X68.789 Y99.382 E.31654 ; infill
 ;LAYER_CHANGE
 ;Z:6.75
 ;HEIGHT:0.45
-G1 Z6.75 F60 ; simple layer change
+G1 Z6.75 F3000 ; simple layer change
 G1 X68.322 Y99.008 ; travel to first layer point
 ;TYPE:External perimeter
 ;WIDTH:0.7
@@ -8231,7 +8231,7 @@ G1 X123.169 Y100.412 E40.23609 ; infill
 ;LAYER_CHANGE
 ;Z:7.2
 ;HEIGHT:0.45
-G1 Z7.2 F60 ; simple layer change
+G1 Z7.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X67.356 Y101.544 ; travel to first layer point
 ;TYPE:External perimeter
@@ -8586,7 +8586,7 @@ G1 X111.133 Y111.623 E31.70179 ; infill
 ;LAYER_CHANGE
 ;Z:7.65
 ;HEIGHT:0.45
-G1 Z7.65 F60 ; simple layer change
+G1 Z7.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X66.172 Y101.514 ; travel to first layer point
 ;TYPE:External perimeter
@@ -8963,7 +8963,7 @@ G1 X77.848 Y94.915 E2.42784 ; infill
 ;LAYER_CHANGE
 ;Z:8.1
 ;HEIGHT:0.45
-G1 Z8.1 F60 ; simple layer change
+G1 Z8.1 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X68.123 Y99.361 ; travel to first layer point
 ;TYPE:External perimeter
@@ -9441,7 +9441,7 @@ G1 X110.034 Y112.722 E34.27821 ; infill
 ;LAYER_CHANGE
 ;Z:8.55
 ;HEIGHT:0.45
-G1 Z8.55 F60 ; simple layer change
+G1 Z8.55 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X80.337 Y93.932 ; travel to first layer point
 ;TYPE:Perimeter
@@ -9896,7 +9896,7 @@ G1 X124.388 Y101.632 E29.00184 ; infill
 ;LAYER_CHANGE
 ;Z:9
 ;HEIGHT:0.45
-G1 Z9 F60 ; simple layer change
+G1 Z9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X86.605 Y106.068 ; travel to first layer point
 ;TYPE:Perimeter
@@ -10352,7 +10352,7 @@ G1 X109.103 Y113.653 E28.08732 ; infill
 ;LAYER_CHANGE
 ;Z:9.45
 ;HEIGHT:0.45
-G1 Z9.45 F60 ; simple layer change
+G1 Z9.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X84.799 Y93.932 ; travel to first layer point
 ;TYPE:Perimeter
@@ -11021,7 +11021,7 @@ G1 X109.727 Y86.549 E11.03528 ; infill
 ;LAYER_CHANGE
 ;Z:9.9
 ;HEIGHT:0.45
-G1 Z9.9 F60 ; simple layer change
+G1 Z9.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X77.528 Y99.628 ; travel to first layer point
 ;TYPE:Perimeter
@@ -11668,7 +11668,7 @@ G1 X108.307 Y114.45 E8.65174 ; infill
 ;LAYER_CHANGE
 ;Z:10.35
 ;HEIGHT:0.450001
-G1 Z10.35 F60 ; simple layer change
+G1 Z10.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X88.384 Y97.377 ; travel to first layer point
 ;TYPE:Perimeter
@@ -12583,7 +12583,7 @@ G1 X91.33 Y108.398 E3.29637 ; infill
 ;LAYER_CHANGE
 ;Z:10.8
 ;HEIGHT:0.45
-G1 Z10.8 F60 ; simple layer change
+G1 Z10.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X86.339 Y93.932 ; travel to first layer point
 ;TYPE:Perimeter
@@ -13291,7 +13291,7 @@ G1 X91.588 Y108.412 E4.12519 ; infill
 ;LAYER_CHANGE
 ;Z:11.25
 ;HEIGHT:0.45
-G1 Z11.25 F60 ; simple layer change
+G1 Z11.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X64.056 Y99.583 ; travel to first layer point
 ;TYPE:External perimeter
@@ -14094,7 +14094,7 @@ G1 X89.993 Y104.542 E6.42265 ; infill
 ;LAYER_CHANGE
 ;Z:11.7
 ;HEIGHT:0.45
-G1 Z11.7 F60 ; simple layer change
+G1 Z11.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X67.13 Y100.16 ; travel to first layer point
 ;TYPE:External perimeter
@@ -15212,7 +15212,7 @@ G1 X89.987 Y104.587 E6.48406 ; infill
 ;LAYER_CHANGE
 ;Z:12.15
 ;HEIGHT:0.45
-G1 Z12.15 F60 ; simple layer change
+G1 Z12.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X64.942 Y98.284 ; travel to first layer point
 ;TYPE:External perimeter
@@ -16372,7 +16372,7 @@ G1 X88.845 Y95.367 E6.44651 ; infill
 ;LAYER_CHANGE
 ;Z:12.6
 ;HEIGHT:0.450001
-G1 Z12.6 F60 ; simple layer change
+G1 Z12.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X64.82 Y101.717 ; travel to first layer point
 ;TYPE:External perimeter
@@ -17724,7 +17724,7 @@ G1 X89.975 Y104.678 E6.51108 ; infill
 ;LAYER_CHANGE
 ;Z:13.05
 ;HEIGHT:0.45
-G1 Z13.05 F60 ; simple layer change
+G1 Z13.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X65.367 Y101.738 ; travel to first layer point
 ;TYPE:External perimeter
@@ -19008,7 +19008,7 @@ G1 X89.558 Y95.167 E6.46229 ; infill
 ;LAYER_CHANGE
 ;Z:13.5
 ;HEIGHT:0.45
-G1 Z13.5 F60 ; simple layer change
+G1 Z13.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X65.21 Y101.742 ; travel to first layer point
 ;TYPE:External perimeter
@@ -20213,7 +20213,7 @@ G1 X90.074 Y94.804 E15.22728 ; infill
 ;LAYER_CHANGE
 ;Z:13.95
 ;HEIGHT:0.45
-G1 Z13.95 F60 ; simple layer change
+G1 Z13.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X64.419 Y98.283 ; travel to first layer point
 ;TYPE:External perimeter
@@ -21248,7 +21248,7 @@ G1 X129.663 Y101.218 E15.31587 ; infill
 ;LAYER_CHANGE
 ;Z:14.4
 ;HEIGHT:0.45
-G1 Z14.4 F60 ; simple layer change
+G1 Z14.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X65.807 Y98.567 ; travel to first layer point
 ;TYPE:External perimeter
@@ -22114,7 +22114,7 @@ G1 X108.959 Y91.041 E.10299 ; infill
 ;LAYER_CHANGE
 ;Z:14.85
 ;HEIGHT:0.450001
-G1 Z14.85 F60 ; simple layer change
+G1 Z14.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X62.915 Y99.412 ; travel to first layer point
 ;TYPE:External perimeter
@@ -22958,7 +22958,7 @@ G1 X130.076 Y101.63 E15.51559 ; infill
 ;LAYER_CHANGE
 ;Z:15.3
 ;HEIGHT:0.45
-G1 Z15.3 F60 ; simple layer change
+G1 Z15.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X66.16 Y99.319 ; travel to first layer point
 ;TYPE:External perimeter
@@ -23814,7 +23814,7 @@ G1 X108.322 Y91.678 E.10071 ; infill
 ;LAYER_CHANGE
 ;Z:15.75
 ;HEIGHT:0.45
-G1 Z15.75 F60 ; simple layer change
+G1 Z15.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X66.188 Y100.028 ; travel to first layer point
 ;TYPE:External perimeter
@@ -24748,7 +24748,7 @@ G1 X100.823 Y118.033 E.2398 ; infill
 ;LAYER_CHANGE
 ;Z:16.2
 ;HEIGHT:0.450001
-G1 Z16.2 F60 ; simple layer change
+G1 Z16.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X64.841 Y98.351 ; travel to first layer point
 ;TYPE:External perimeter
@@ -25621,7 +25621,7 @@ G1 X101.937 Y81.884 E.32147 ; infill
 ;LAYER_CHANGE
 ;Z:16.65
 ;HEIGHT:0.449999
-G1 Z16.65 F60 ; simple layer change
+G1 Z16.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X66.114 Y99.632 ; travel to first layer point
 ;TYPE:External perimeter
@@ -26474,7 +26474,7 @@ G1 X102.984 Y82.039 E.43243 ; infill
 ;LAYER_CHANGE
 ;Z:17.1
 ;HEIGHT:0.450001
-G1 Z17.1 F60 ; simple layer change
+G1 Z17.1 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X126.605 Y108.094 ; travel to first layer point
 ;TYPE:Perimeter
@@ -27283,7 +27283,7 @@ G1 X90.003 Y94.465 E6.67026 ; infill
 ;LAYER_CHANGE
 ;Z:17.55
 ;HEIGHT:0.449999
-G1 Z17.55 F60 ; simple layer change
+G1 Z17.55 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X101.51 Y81.952 ; travel to first layer point
 ;TYPE:Perimeter
@@ -28154,7 +28154,7 @@ G1 X89.528 Y105.175 E6.65646 ; infill
 ;LAYER_CHANGE
 ;Z:18
 ;HEIGHT:0.450001
-G1 Z18 F60 ; simple layer change
+G1 Z18 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X112.368 Y116.943 ; travel to first layer point
 ;TYPE:Perimeter
@@ -29015,7 +29015,7 @@ G1 X89.985 Y94.395 E6.69499 ; infill
 ;LAYER_CHANGE
 ;Z:18.45
 ;HEIGHT:0.450001
-G1 Z18.45 F60 ; simple layer change
+G1 Z18.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X132.955 Y100.929 ; travel to first layer point
 ;TYPE:Perimeter
@@ -29943,7 +29943,7 @@ G1 X89.523 Y95.131 E6.63746 ; infill
 ;LAYER_CHANGE
 ;Z:18.9
 ;HEIGHT:0.449999
-G1 Z18.9 F60 ; simple layer change
+G1 Z18.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X122.974 Y112.023 ; travel to first layer point
 ;TYPE:Perimeter
@@ -30868,7 +30868,7 @@ G1 X89.968 Y94.389 E6.64431 ; infill
 ;LAYER_CHANGE
 ;Z:19.35
 ;HEIGHT:0.450001
-G1 Z19.35 F60 ; simple layer change
+G1 Z19.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X77.516 Y104.18 ; travel to first layer point
 ;TYPE:Perimeter
@@ -31817,7 +31817,7 @@ G1 X133.201 Y99.066 E9.04298 ; infill
 ;LAYER_CHANGE
 ;Z:19.8
 ;HEIGHT:0.449999
-G1 Z19.8 F60 ; simple layer change
+G1 Z19.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X86.953 Y93.92 ; travel to first layer point
 ;TYPE:Perimeter
@@ -32754,7 +32754,7 @@ G1 X115.911 Y84.089 E.07098 ; infill
 ;LAYER_CHANGE
 ;Z:20.25
 ;HEIGHT:0.450001
-G1 Z20.25 F60 ; simple layer change
+G1 Z20.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.365 Y107.785 ; travel to first layer point
 ;TYPE:Perimeter
@@ -33545,7 +33545,7 @@ G1 X122.74 Y111.362 E6.8641 ; infill
 ;LAYER_CHANGE
 ;Z:20.7
 ;HEIGHT:0.450001
-G1 Z20.7 F60 ; simple layer change
+G1 Z20.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.116 Y108.412 ; travel to first layer point
 ;TYPE:Perimeter
@@ -34307,7 +34307,7 @@ G1 X119.781 Y114.354 E.20643 ; infill
 ;LAYER_CHANGE
 ;Z:21.15
 ;HEIGHT:0.449999
-G1 Z21.15 F60 ; simple layer change
+G1 Z21.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.694 Y96.216 ; travel to first layer point
 ;TYPE:Perimeter
@@ -35079,7 +35079,7 @@ G1 X126.736 Y109.668 E4.72582 ; infill
 ;LAYER_CHANGE
 ;Z:21.6
 ;HEIGHT:0.450001
-G1 Z21.6 F60 ; simple layer change
+G1 Z21.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.31 Y96.17 ; travel to first layer point
 ;TYPE:Perimeter
@@ -35842,7 +35842,7 @@ G1 X129.704 Y93.053 E3.32402 ; infill
 ;LAYER_CHANGE
 ;Z:22.05
 ;HEIGHT:0.449999
-G1 Z22.05 F60 ; simple layer change
+G1 Z22.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.67 Y101.514 ; travel to first layer point
 ;TYPE:Perimeter
@@ -36705,7 +36705,7 @@ G1 X126.989 Y91.605 E1.30947 ; infill
 ;LAYER_CHANGE
 ;Z:22.5
 ;HEIGHT:0.450001
-G1 Z22.5 F60 ; simple layer change
+G1 Z22.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.658 Y100.007 ; travel to first layer point
 ;TYPE:Perimeter
@@ -37471,7 +37471,7 @@ M107 ; disable fan
 ;LAYER_CHANGE
 ;Z:22.95
 ;HEIGHT:0.450001
-G1 Z22.95 F60 ; simple layer change
+G1 Z22.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.249 Y107.99 ; travel to first layer point
 ;TYPE:Perimeter
@@ -38277,7 +38277,7 @@ G1 X126.998 Y109.93 E.06977 ; infill
 ;LAYER_CHANGE
 ;Z:23.4
 ;HEIGHT:0.449999
-G1 Z23.4 F60 ; simple layer change
+G1 Z23.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.635 Y106.072 ; travel to first layer point
 ;TYPE:Perimeter
@@ -39023,7 +39023,7 @@ G1 X132.962 Y103.137 E2.21804 ; infill
 ;LAYER_CHANGE
 ;Z:23.85
 ;HEIGHT:0.450001
-G1 Z23.85 F60 ; simple layer change
+G1 Z23.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.251 Y93.237 ; travel to first layer point
 ;TYPE:Perimeter
@@ -39741,7 +39741,7 @@ G1 X133.633 Y99.99 E.66493 ; infill
 ;LAYER_CHANGE
 ;Z:24.3
 ;HEIGHT:0.449999
-G1 Z24.3 F60 ; simple layer change
+G1 Z24.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X90.611 Y98.176 ; travel to first layer point
 ;TYPE:Perimeter
@@ -40452,7 +40452,7 @@ G1 X131.552 Y95.946 E3.56915 ; infill
 ;LAYER_CHANGE
 ;Z:24.75
 ;HEIGHT:0.450001
-G1 Z24.75 F60 ; simple layer change
+G1 Z24.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X110.87 Y118.597 ; travel to first layer point
 ;TYPE:Perimeter
@@ -41151,7 +41151,7 @@ G1 X95.774 Y90.663 E11.95731 ; perimeter
 ;LAYER_CHANGE
 ;Z:25.2
 ;HEIGHT:0.450001
-G1 Z25.2 F60 ; simple layer change
+G1 Z25.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X123.543 Y112.43 ; travel to first layer point
 ;TYPE:Perimeter
@@ -41973,7 +41973,7 @@ G1 X91.831 Y97.101 E11.96671 ; perimeter
 ;LAYER_CHANGE
 ;Z:25.65
 ;HEIGHT:0.449999
-G1 Z25.65 F60 ; simple layer change
+G1 Z25.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X124.364 Y111.94 ; travel to first layer point
 ;TYPE:Perimeter
@@ -42740,7 +42740,7 @@ G1 X91.82 Y101.503 E11.97712 ; perimeter
 ;LAYER_CHANGE
 ;Z:26.1
 ;HEIGHT:0.450001
-G1 Z26.1 F60 ; simple layer change
+G1 Z26.1 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X111.42 Y118.514 ; travel to first layer point
 ;TYPE:Perimeter
@@ -43480,7 +43480,7 @@ G1 X92.401 Y109.131 E11.98726 ; perimeter
 ;LAYER_CHANGE
 ;Z:26.55
 ;HEIGHT:0.449999
-G1 Z26.55 F60 ; simple layer change
+G1 Z26.55 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X116.767 Y116.642 ; travel to first layer point
 ;TYPE:Perimeter
@@ -44227,7 +44227,7 @@ G1 X91.796 Y105.11 E11.99657 ; perimeter
 ;LAYER_CHANGE
 ;Z:27
 ;HEIGHT:0.450001
-G1 Z27 F60 ; simple layer change
+G1 Z27 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X124.592 Y112.677 ; travel to first layer point
 ;TYPE:Perimeter
@@ -44982,7 +44982,7 @@ G1 X91.784 Y100.139 E12.00635 ; perimeter
 ;LAYER_CHANGE
 ;Z:27.45
 ;HEIGHT:0.450001
-G1 Z27.45 F60 ; simple layer change
+G1 Z27.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X115.524 Y116.55 ; travel to first layer point
 ;TYPE:Perimeter
@@ -45746,7 +45746,7 @@ G1 X89.919 Y93.182 E12.14261 ; perimeter
 ;LAYER_CHANGE
 ;Z:27.9
 ;HEIGHT:0.449999
-G1 Z27.9 F60 ; simple layer change
+G1 Z27.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X119.558 Y114.905 ; travel to first layer point
 ;TYPE:Perimeter
@@ -46496,7 +46496,7 @@ G1 X89.908 Y92.459 E12.42221 ; perimeter
 ;LAYER_CHANGE
 ;Z:28.35
 ;HEIGHT:0.450001
-G1 Z28.35 F60 ; simple layer change
+G1 Z28.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X115.807 Y117.298 ; travel to first layer point
 ;TYPE:Perimeter
@@ -47222,7 +47222,7 @@ G1 X91.749 Y97.575 E12.56367 ; perimeter
 ;LAYER_CHANGE
 ;Z:28.8
 ;HEIGHT:0.449999
-G1 Z28.8 F60 ; simple layer change
+G1 Z28.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X117.266 Y116.768 ; travel to first layer point
 ;TYPE:Perimeter
@@ -47931,7 +47931,7 @@ G1 X90.456 Y90.911 E12.67334 ; perimeter
 ;LAYER_CHANGE
 ;Z:29.25
 ;HEIGHT:0.450001
-G1 Z29.25 F60 ; simple layer change
+G1 Z29.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.997 Y91.943 ; travel to first layer point
 ;TYPE:Perimeter
@@ -48700,7 +48700,7 @@ G1 X118.041 Y84.597 E15.5478 ; perimeter
 ;LAYER_CHANGE
 ;Z:29.7
 ;HEIGHT:0.450001
-G1 Z29.7 F60 ; simple layer change
+G1 Z29.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.035 Y108.154 ; travel to first layer point
 ;TYPE:Perimeter
@@ -49486,7 +49486,7 @@ G1 X121.899 Y84.503 E22.36841 ; perimeter
 ;LAYER_CHANGE
 ;Z:30.15
 ;HEIGHT:0.449999
-G1 Z30.15 F60 ; simple layer change
+G1 Z30.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X123.257 Y86.075 ; travel to first layer point
 ;TYPE:Perimeter
@@ -50212,7 +50212,7 @@ G1 X94.527 Y107.493 E4.94295 ; perimeter
 ;LAYER_CHANGE
 ;Z:30.6
 ;HEIGHT:0.450001
-G1 Z30.6 F60 ; simple layer change
+G1 Z30.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X133.432 Y104.026 ; travel to first layer point
 ;TYPE:Perimeter
@@ -50895,7 +50895,7 @@ G1 X94.794 Y107.52 E4.64296 ; perimeter
 ;LAYER_CHANGE
 ;Z:31.05
 ;HEIGHT:0.449999
-G1 Z31.05 F60 ; simple layer change
+G1 Z31.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X134.676 Y103.496 ; travel to first layer point
 ;TYPE:Perimeter
@@ -51558,7 +51558,7 @@ G1 X89.435 Y105.803 E4.41243 ; perimeter
 ;LAYER_CHANGE
 ;Z:31.5
 ;HEIGHT:0.450001
-G1 Z31.5 F60 ; simple layer change
+G1 Z31.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X126.907 Y89.524 ; travel to first layer point
 ;TYPE:Perimeter
@@ -52184,7 +52184,7 @@ G1 X91.666 Y106.499 E4.23486 ; perimeter
 ;LAYER_CHANGE
 ;Z:31.95
 ;HEIGHT:0.450001
-G1 Z31.95 F60 ; simple layer change
+G1 Z31.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X113.812 Y108.065 ; travel to first layer point
 ;TYPE:Perimeter
@@ -52776,7 +52776,7 @@ G1 X95.682 Y107.819 E4.08187 ; perimeter
 ;LAYER_CHANGE
 ;Z:32.4
 ;HEIGHT:0.450001
-G1 Z32.4 F60 ; simple layer change
+G1 Z32.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X108.192 Y108.966 ; travel to first layer point
 ;TYPE:Perimeter
@@ -53347,7 +53347,7 @@ G1 X132.238 Y92.164 E12.7194 ; perimeter
 ;LAYER_CHANGE
 ;Z:32.85
 ;HEIGHT:0.449997
-G1 Z32.85 F60 ; simple layer change
+G1 Z32.85 F3000 ; simple layer change
 G1 X130.723 Y91.826 ; travel to first layer point
 ;TYPE:Perimeter
 ;WIDTH:0.847065
@@ -53873,7 +53873,7 @@ G1 X89.388 Y106.576 E3.86623 ; perimeter
 ;LAYER_CHANGE
 ;Z:33.3
 ;HEIGHT:0.450001
-G1 Z33.3 F60 ; simple layer change
+G1 Z33.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X132.22 Y106.657 ; travel to first layer point
 ;TYPE:Perimeter
@@ -54408,7 +54408,7 @@ G1 X94.512 Y107.575 E3.80177 ; perimeter
 ;LAYER_CHANGE
 ;Z:33.75
 ;HEIGHT:0.450001
-G1 Z33.75 F60 ; simple layer change
+G1 Z33.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X133.727 Y104.996 ; travel to first layer point
 ;TYPE:Perimeter
@@ -54859,7 +54859,7 @@ G1 X90.803 Y105.943 E3.74664 ; perimeter
 ;LAYER_CHANGE
 ;Z:34.2
 ;HEIGHT:0.450001
-G1 Z34.2 F60 ; simple layer change
+G1 Z34.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X135.907 Y101.031 ; travel to first layer point
 ;TYPE:Perimeter
@@ -55270,7 +55270,7 @@ G1 X94.827 Y107.616 E3.709 ; perimeter
 ;LAYER_CHANGE
 ;Z:34.65
 ;HEIGHT:0.450001
-G1 Z34.65 F60 ; simple layer change
+G1 Z34.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X136.596 Y101.348 ; travel to first layer point
 ;TYPE:Perimeter
@@ -55641,7 +55641,7 @@ G1 X92.387 Y109.354 E3.68885 ; perimeter
 ;LAYER_CHANGE
 ;Z:35.1
 ;HEIGHT:0.449997
-G1 Z35.1 F60 ; simple layer change
+G1 Z35.1 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X137.511 Y100.405 ; travel to first layer point
 ;WIDTH:0.628187
@@ -55988,7 +55988,7 @@ G1 X90.489 Y109.26 E3.68555 ; perimeter
 ;LAYER_CHANGE
 ;Z:35.55
 ;HEIGHT:0.450001
-G1 Z35.55 F60 ; simple layer change
+G1 Z35.55 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X112.818 Y109.845 ; travel to first layer point
 ;TYPE:Perimeter
@@ -56331,7 +56331,7 @@ G1 X91.516 Y106.09 E3.70417 ; perimeter
 ;LAYER_CHANGE
 ;Z:36
 ;HEIGHT:0.450001
-G1 Z36 F60 ; simple layer change
+G1 Z36 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X109.354 Y109.087 ; travel to first layer point
 ;TYPE:Perimeter
@@ -56677,7 +56677,7 @@ G1 X90.789 Y109.3 E3.75392 ; perimeter
 ;LAYER_CHANGE
 ;Z:36.45
 ;HEIGHT:0.450001
-G1 Z36.45 F60 ; simple layer change
+G1 Z36.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X113.437 Y107.808 ; travel to first layer point
 ;TYPE:Perimeter
@@ -57021,7 +57021,7 @@ G1 X93.887 Y109.485 E3.83835 ; perimeter
 ;LAYER_CHANGE
 ;Z:36.9
 ;HEIGHT:0.450001
-G1 Z36.9 F60 ; simple layer change
+G1 Z36.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X113.847 Y107.712 ; travel to first layer point
 ;TYPE:Perimeter
@@ -57370,7 +57370,7 @@ G1 X89.638 Y107.318 E3.95636 ; perimeter
 ;LAYER_CHANGE
 ;Z:37.35
 ;HEIGHT:0.449997
-G1 Z37.35 F60 ; simple layer change
+G1 Z37.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X109.15 Y109.111 ; travel to first layer point
 ;TYPE:Perimeter
@@ -57724,7 +57724,7 @@ G1 X95.355 Y109.975 E4.10171 ; perimeter
 ;LAYER_CHANGE
 ;Z:37.8
 ;HEIGHT:0.450001
-G1 Z37.8 F60 ; simple layer change
+G1 Z37.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X114.14 Y108.652 ; travel to first layer point
 ;TYPE:Perimeter
@@ -58088,7 +58088,7 @@ G1 X89.258 Y105.985 E4.30304 ; perimeter
 ;LAYER_CHANGE
 ;Z:38.25
 ;HEIGHT:0.450001
-G1 Z38.25 F60 ; simple layer change
+G1 Z38.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X113.579 Y107.793 ; travel to first layer point
 ;TYPE:Perimeter
@@ -58457,7 +58457,7 @@ G1 X92.188 Y109.438 E4.54198 ; perimeter
 ;LAYER_CHANGE
 ;Z:38.7
 ;HEIGHT:0.450001
-G1 Z38.7 F60 ; simple layer change
+G1 Z38.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X107.346 Y109.384 ; travel to first layer point
 ;TYPE:Perimeter
@@ -58849,7 +58849,7 @@ G1 X89.234 Y105.513 E4.83056 ; perimeter
 ;LAYER_CHANGE
 ;Z:39.15
 ;HEIGHT:0.450001
-G1 Z39.15 F60 ; simple layer change
+G1 Z39.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X114.231 Y108.809 ; travel to first layer point
 ;TYPE:Perimeter
@@ -59250,7 +59250,7 @@ G1 X89.607 Y107.224 E5.19376 ; perimeter
 ;LAYER_CHANGE
 ;Z:39.6
 ;HEIGHT:0.449997
-G1 Z39.6 F60 ; simple layer change
+G1 Z39.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X114.646 Y107.712 ; travel to first layer point
 ;TYPE:Perimeter
@@ -59680,7 +59680,7 @@ G1 X96.268 Y107.838 E5.65115 ; perimeter
 ;LAYER_CHANGE
 ;Z:40.05
 ;HEIGHT:0.450001
-G1 Z40.05 F60 ; simple layer change
+G1 Z40.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X109.007 Y109.174 ; travel to first layer point
 ;TYPE:Perimeter
@@ -60114,7 +60114,7 @@ G1 X89.584 Y108.3 E6.22859 ; perimeter
 ;LAYER_CHANGE
 ;Z:40.5
 ;HEIGHT:0.450001
-G1 Z40.5 F60 ; simple layer change
+G1 Z40.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X107.811 Y109.748 ; travel to first layer point
 ;TYPE:Perimeter
@@ -60547,7 +60547,7 @@ G1 X93.967 Y109.595 E7.04215 ; perimeter
 ;LAYER_CHANGE
 ;Z:40.95
 ;HEIGHT:0.450001
-G1 Z40.95 F60 ; simple layer change
+G1 Z40.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X104.231 Y109.85 ; travel to first layer point
 ;TYPE:Perimeter
@@ -60964,7 +60964,7 @@ G1 X94.891 Y109.659 E17.27776 ; perimeter
 ;LAYER_CHANGE
 ;Z:41.4
 ;HEIGHT:0.450001
-G1 Z41.4 F60 ; simple layer change
+G1 Z41.4 F3000 ; simple layer change
 G1 X96.22 Y109.128 ; travel to first layer point
 ;TYPE:Perimeter
 ;WIDTH:0.724463
@@ -61345,7 +61345,7 @@ G1 X96.186 Y109.743 E50.42025 ; perimeter
 ;LAYER_CHANGE
 ;Z:41.85
 ;HEIGHT:0.449997
-G1 Z41.85 F60 ; simple layer change
+G1 Z41.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X96.946 Y90.82 ; travel to first layer point
 ;TYPE:Perimeter
@@ -61725,7 +61725,7 @@ G1 X96.912 Y90.206 E32.92461 ; perimeter
 ;LAYER_CHANGE
 ;Z:42.3
 ;HEIGHT:0.450001
-G1 Z42.3 F60 ; simple layer change
+G1 Z42.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X113.845 Y89.978 ; travel to first layer point
 ;TYPE:Perimeter
@@ -62105,7 +62105,7 @@ G1 X113.806 Y89.259 E32.60651 ; perimeter
 ;LAYER_CHANGE
 ;Z:42.75
 ;HEIGHT:0.450001
-G1 Z42.75 F60 ; simple layer change
+G1 Z42.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X109.975 Y90.074 ; travel to first layer point
 ;TYPE:Perimeter
@@ -62436,7 +62436,7 @@ G1 X109.941 Y89.46 E31.95241 ; perimeter
 ;LAYER_CHANGE
 ;Z:43.2
 ;HEIGHT:0.450001
-G1 Z43.2 F60 ; simple layer change
+G1 Z43.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X112.724 Y90.538 ; travel to first layer point
 ;TYPE:Perimeter
@@ -62669,7 +62669,7 @@ G1 X112.758 Y91.152 E31.43241 ; perimeter
 ;LAYER_CHANGE
 ;Z:43.65
 ;HEIGHT:0.450001
-G1 Z43.65 F60 ; simple layer change
+G1 Z43.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X112.853 Y110.111 ; travel to first layer point
 ;TYPE:Perimeter
@@ -62902,7 +62902,7 @@ G1 X112.819 Y110.726 E31.6671 ; perimeter
 ;LAYER_CHANGE
 ;Z:44.1
 ;HEIGHT:0.449997
-G1 Z44.1 F60 ; simple layer change
+G1 Z44.1 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X114.111 Y102.48 ; travel to first layer point
 ;TYPE:Perimeter
@@ -63160,7 +63160,7 @@ G1 X99.308 Y90.015 E20.46147 ; perimeter
 ;LAYER_CHANGE
 ;Z:44.55
 ;HEIGHT:0.450001
-G1 Z44.55 F60 ; simple layer change
+G1 Z44.55 F3000 ; simple layer change
 G1 X99.673 Y91.227 ; travel to first layer point
 ;TYPE:Perimeter
 ;WIDTH:0.724284
@@ -63429,7 +63429,7 @@ G1 X92.216 Y90.384 E20.59003 ; perimeter
 ;LAYER_CHANGE
 ;Z:45
 ;HEIGHT:0.450001
-G1 Z45 F60 ; simple layer change
+G1 Z45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.595 Y108.56 ; travel to first layer point
 ;TYPE:Perimeter
@@ -63734,7 +63734,7 @@ G1 X90.261 Y91.332 E.26932 ; infill
 ;LAYER_CHANGE
 ;Z:45.45
 ;HEIGHT:0.450001
-G1 Z45.45 F60 ; simple layer change
+G1 Z45.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X114.217 Y101.356 ; travel to first layer point
 ;TYPE:Perimeter
@@ -64185,7 +64185,7 @@ G1 X89.954 Y91.133 E.08568 ; infill
 ;LAYER_CHANGE
 ;Z:45.9
 ;HEIGHT:0.450001
-G1 Z45.9 F60 ; simple layer change
+G1 Z45.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X96.849 Y108.748 ; travel to first layer point
 ;TYPE:Perimeter
@@ -64704,7 +64704,7 @@ G1 X89.703 Y107.594 E9.29192 ; infill
 ;LAYER_CHANGE
 ;Z:46.35
 ;HEIGHT:0.449997
-G1 Z46.35 F60 ; simple layer change
+G1 Z46.35 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X101.208 Y108.986 ; travel to first layer point
 ;TYPE:Perimeter
@@ -65189,7 +65189,7 @@ G1 X89.676 Y107.896 E12.212 ; infill
 ;LAYER_CHANGE
 ;Z:46.8
 ;HEIGHT:0.450001
-G1 Z46.8 F60 ; simple layer change
+G1 Z46.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X108.426 Y90.626 ; travel to first layer point
 ;TYPE:Perimeter
@@ -65556,7 +65556,7 @@ G1 X103.526 Y90.784 E1.77354 ; infill
 ;LAYER_CHANGE
 ;Z:47.25
 ;HEIGHT:0.450001
-G1 Z47.25 F60 ; simple layer change
+G1 Z47.25 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X100.05 Y110.768 ; travel to first layer point
 ;TYPE:Perimeter
@@ -65769,7 +65769,7 @@ M107 ; disable fan
 ;LAYER_CHANGE
 ;Z:47.7
 ;HEIGHT:0.450001
-G1 Z47.7 F60 ; simple layer change
+G1 Z47.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.321 Y101.365 ; travel to first layer point
 ;TYPE:Perimeter
@@ -66153,7 +66153,7 @@ G1 X113.404 Y108.261 E48.93449 ; infill
 ;LAYER_CHANGE
 ;Z:48.15
 ;HEIGHT:0.450001
-G1 Z48.15 F60 ; simple layer change
+G1 Z48.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.451 Y98.411 ; travel to first layer point
 ;TYPE:Perimeter
@@ -66545,7 +66545,7 @@ G1 X93.21 Y90.068 E.29984 ; infill
 ;LAYER_CHANGE
 ;Z:48.6
 ;HEIGHT:0.449997
-G1 Z48.6 F60 ; simple layer change
+G1 Z48.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X94.128 Y102.824 ; travel to first layer point
 ;TYPE:Perimeter
@@ -66891,7 +66891,7 @@ G1 X106.096 Y110.67 E5.2939 ; infill
 ;LAYER_CHANGE
 ;Z:49.05
 ;HEIGHT:0.450001
-G1 Z49.05 F60 ; simple layer change
+G1 Z49.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.945 Y102.163 ; travel to first layer point
 ;TYPE:Perimeter
@@ -67378,7 +67378,7 @@ G1 X95.39 Y89.916 E.13043 ; infill
 ;LAYER_CHANGE
 ;Z:49.5
 ;HEIGHT:0.450001
-G1 Z49.5 F60 ; simple layer change
+G1 Z49.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.886 Y99.051 ; travel to first layer point
 ;TYPE:External perimeter
@@ -67828,7 +67828,7 @@ G1 X115.529 Y96.85 E.19616 ; infill
 ;LAYER_CHANGE
 ;Z:49.95
 ;HEIGHT:0.450001
-G1 Z49.95 F60 ; simple layer change
+G1 Z49.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X98.525 Y89.625 ; travel to first layer point
 ;TYPE:Perimeter
@@ -68238,7 +68238,7 @@ G1 X95.137 Y97.14 E2.79167 ; perimeter
 ;LAYER_CHANGE
 ;Z:50.4
 ;HEIGHT:0.450001
-G1 Z50.4 F60 ; simple layer change
+G1 Z50.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X115.918 Y98.931 ; travel to first layer point
 ;TYPE:Perimeter
@@ -68564,7 +68564,7 @@ G1 X95.569 Y102.639 E2.82749 ; perimeter
 ;LAYER_CHANGE
 ;Z:50.85
 ;HEIGHT:0.449997
-G1 Z50.85 F60 ; simple layer change
+G1 Z50.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X107.872 Y109.871 ; travel to first layer point
 ;TYPE:Perimeter
@@ -68889,7 +68889,7 @@ G1 X95.109 Y102.89 E2.86594 ; perimeter
 ;LAYER_CHANGE
 ;Z:51.3
 ;HEIGHT:0.450001
-G1 Z51.3 F60 ; simple layer change
+G1 Z51.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X115.757 Y111.109 ; travel to first layer point
 ;TYPE:Perimeter
@@ -69115,7 +69115,7 @@ G1 X94.499 Y96.888 E2.90478 ; perimeter
 ;LAYER_CHANGE
 ;Z:51.75
 ;HEIGHT:0.450001
-G1 Z51.75 F60 ; simple layer change
+G1 Z51.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X92.352 Y101.842 ; travel to first layer point
 ;WIDTH:0.922849
@@ -69231,7 +69231,7 @@ G1 X91.827 Y102.472 E5.12705 ; perimeter
 ;LAYER_CHANGE
 ;Z:52.2
 ;HEIGHT:0.450001
-G1 Z52.2 F60 ; simple layer change
+G1 Z52.2 F3000 ; simple layer change
 G1 X92.403 Y101.887 ; travel to first layer point
 ;WIDTH:0.930739
 G1 X92.147 Y101.683 E5.17558 ; perimeter
@@ -69348,7 +69348,7 @@ G1 X91.871 Y102.524 E10.31746 ; perimeter
 ;LAYER_CHANGE
 ;Z:52.65
 ;HEIGHT:0.450001
-G1 Z52.65 F60 ; simple layer change
+G1 Z52.65 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X94.352 Y102.195 ; travel to first layer point
 ;WIDTH:0.7
@@ -69481,7 +69481,7 @@ G1 X94.665 Y103.225 E5.22532 ; perimeter
 ;LAYER_CHANGE
 ;Z:53.1
 ;HEIGHT:0.449997
-G1 Z53.1 F60 ; simple layer change
+G1 Z53.1 F3000 ; simple layer change
 G1 X95.16 Y101.833 ; travel to first layer point
 G1 X95.142 Y101.848 E5.22783 ; perimeter
 G1 X94.713 Y102.088 E5.28055 ; perimeter
@@ -69611,7 +69611,7 @@ G1 X95.68 Y102.799 E10.52899 ; perimeter
 ;LAYER_CHANGE
 ;Z:53.55
 ;HEIGHT:0.450001
-G1 Z53.55 F60 ; simple layer change
+G1 Z53.55 F3000 ; simple layer change
 G1 X95.921 Y100.834 ; travel to first layer point
 G1 X95.813 Y101.1 E10.55978 ; perimeter
 G1 X95.508 Y101.524 E10.6158 ; perimeter
@@ -69741,7 +69741,7 @@ G1 X96.981 Y101.171 E15.91464 ; perimeter
 ;LAYER_CHANGE
 ;Z:54
 ;HEIGHT:0.450001
-G1 Z54 F60 ; simple layer change
+G1 Z54 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.899 Y102.248 ; travel to first layer point
 G1 X93.667 Y102.261 E.02492 ; perimeter
@@ -69872,7 +69872,7 @@ G1 X94.01 Y103.371 E5.45014 ; perimeter
 ;LAYER_CHANGE
 ;Z:54.45
 ;HEIGHT:0.450001
-G1 Z54.45 F60 ; simple layer change
+G1 Z54.45 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.226 Y101.774 ; travel to first layer point
 G1 X95.141 Y101.848 E.01209 ; perimeter
@@ -70002,7 +70002,7 @@ G1 X95.941 Y102.659 E5.51364 ; perimeter
 ;LAYER_CHANGE
 ;Z:54.9
 ;HEIGHT:0.450001
-G1 Z54.9 F60 ; simple layer change
+G1 Z54.9 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.628 Y100.528 ; travel to first layer point
 G1 X91.562 Y100.049 E.05186 ; perimeter
@@ -70130,7 +70130,7 @@ G1 X90.529 Y100.842 E5.57902 ; perimeter
 ;LAYER_CHANGE
 ;Z:55.35
 ;HEIGHT:0.449997
-G1 Z55.35 F60 ; simple layer change
+G1 Z55.35 F3000 ; simple layer change
 G1 X92.294 Y101.647 ; travel to first layer point
 G1 X92.195 Y101.567 E5.59267 ; perimeter
 G1 X91.803 Y101.023 E5.66458 ; perimeter
@@ -70257,7 +70257,7 @@ G1 X91.521 Y102.531 E11.21462 ; perimeter
 ;LAYER_CHANGE
 ;Z:55.8
 ;HEIGHT:0.450001
-G1 Z55.8 F60 ; simple layer change
+G1 Z55.8 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X92.949 Y97.923 ; travel to first layer point
 G1 X92.995 Y97.901 E.00547 ; perimeter
@@ -70386,7 +70386,7 @@ G1 X92.625 Y96.767 E5.70123 ; perimeter
 ;LAYER_CHANGE
 ;Z:56.25
 ;HEIGHT:0.450001
-G1 Z56.25 F60 ; simple layer change
+G1 Z56.25 F3000 ; simple layer change
 G1 X92.834 Y97.979 ; travel to first layer point
 G1 X92.994 Y97.901 E5.72032 ; perimeter
 G1 X93.421 Y97.774 E5.7681 ; perimeter
@@ -70515,7 +70515,7 @@ G1 X92.295 Y96.905 E11.46821 ; perimeter
 ;LAYER_CHANGE
 ;Z:56.7
 ;HEIGHT:0.450001
-G1 Z56.7 F60 ; simple layer change
+G1 Z56.7 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X94.742 Y97.929 ; travel to first layer point
 G1 X94.749 Y97.931 E.00078 ; perimeter
@@ -70644,7 +70644,7 @@ G1 X95.335 Y96.865 E5.8335 ; perimeter
 ;LAYER_CHANGE
 ;Z:57.15
 ;HEIGHT:0.450001
-G1 Z57.15 F60 ; simple layer change
+G1 Z57.15 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.742 Y100.857 ; travel to first layer point
 G1 X91.626 Y100.536 E.03661 ; perimeter
@@ -70775,7 +70775,7 @@ G1 X90.533 Y101.18 E5.8993 ; perimeter
 ;LAYER_CHANGE
 ;Z:57.6
 ;HEIGHT:0.449997
-G1 Z57.6 F60 ; simple layer change
+G1 Z57.6 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.411 Y102.212 ; travel to first layer point
 G1 X93.131 Y102.159 E.03056 ; perimeter
@@ -70907,7 +70907,7 @@ G1 X92.963 Y103.449 E6.10972 ; perimeter
 ;LAYER_CHANGE
 ;Z:58.05
 ;HEIGHT:0.450001
-G1 Z58.05 F60 ; simple layer change
+G1 Z58.05 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X96.542 Y100.926 ; travel to first layer point
 ;TYPE:Perimeter
@@ -71116,7 +71116,7 @@ G1 X97.32 Y97.849 E5.15906 ; perimeter
 ;LAYER_CHANGE
 ;Z:58.5
 ;HEIGHT:0.450001
-G1 Z58.5 F60 ; simple layer change
+G1 Z58.5 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.236 Y101.239 ; travel to first layer point
 ;TYPE:Perimeter
@@ -71322,7 +71322,7 @@ G1 X97.165 Y97.597 E5.22275 ; perimeter
 ;LAYER_CHANGE
 ;Z:58.95
 ;HEIGHT:0.450001
-G1 Z58.95 F60 ; simple layer change
+G1 Z58.95 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X91.094 Y99.157 ; travel to first layer point
 ;TYPE:Perimeter
@@ -71528,7 +71528,7 @@ G1 X96.424 Y96.815 E5.22257 ; perimeter
 ;LAYER_CHANGE
 ;Z:59.4
 ;HEIGHT:0.450001
-G1 Z59.4 F60 ; simple layer change
+G1 Z59.4 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X92.745 Y97.341 ; travel to first layer point
 ;TYPE:Perimeter
@@ -71733,7 +71733,7 @@ G1 X89.754 Y100.575 E5.22246 ; perimeter
 ;LAYER_CHANGE
 ;Z:59.85
 ;HEIGHT:0.449997
-G1 Z59.85 F60 ; simple layer change
+G1 Z59.85 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X92.899 Y97.288 ; travel to first layer point
 ;TYPE:Perimeter
@@ -71938,7 +71938,7 @@ G1 X97.918 Y99.648 E5.22257 ; perimeter
 ;LAYER_CHANGE
 ;Z:60.3
 ;HEIGHT:0.450001
-G1 Z60.3 F60 ; simple layer change
+G1 Z60.3 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.342 Y102.822 ; travel to first layer point
 ;TYPE:Perimeter
@@ -72145,7 +72145,7 @@ G1 X97.782 Y98.906 E5.22291 ; perimeter
 ;LAYER_CHANGE
 ;Z:60.75
 ;HEIGHT:0.450001
-G1 Z60.75 F60 ; simple layer change
+G1 Z60.75 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X95.368 Y97.584 ; travel to first layer point
 ;TYPE:Perimeter
@@ -72354,7 +72354,7 @@ G1 X97.862 Y100.813 E5.21812 ; perimeter
 ;LAYER_CHANGE
 ;Z:61.2
 ;HEIGHT:0.450001
-G1 Z61.2 F60 ; simple layer change
+G1 Z61.2 F3000 ; simple layer change
 G92 E0 ; reset extrusion distance
 G1 X93.217 Y97.2 ; travel to first layer point
 ;TYPE:Perimeter

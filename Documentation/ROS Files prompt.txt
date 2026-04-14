@@ -24,4 +24,8 @@ sudo ip addr add 169.254.107.10/16 dev enx00e04c68446f
 sudo ip link set enx00e04c68446f up
 ping 169.254.107.107  # verify connection
 
+KLIPPER COMMAND
+sudo ip link set can0 up type can bitrate 250000
+
+
 

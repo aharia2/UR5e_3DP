@@ -24,7 +24,7 @@ from moveit_msgs.msg import DisplayTrajectory
 
 TARGET_X = -0.748      # metres
 TARGET_Y = -0.25      # metres
-TARGET_Z = -.5305     # metres
+TARGET_Z = -.53125     # metres
 
 # Nozzle-down orientation (matches initial_positions.yaml / real robot)
 TARGET_QX = 0.5

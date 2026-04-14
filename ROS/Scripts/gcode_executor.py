@@ -18,16 +18,13 @@ Example
   python3 gcode_executor.py "gcode_interpreted files/40x40x40.csv"
 """
 
-import concurrent.futures
 import csv
-import math
+import json
 import os
 import sys
 import threading
 import time
-import urllib.parse
 import urllib.request
-import json
 
 import rclpy
 from rclpy.node import Node
@@ -42,11 +39,12 @@ from moveit_msgs.msg import RobotState
 
 # Maximum TCP speed of the robot at velocity_scale = 1.0  (mm/min).
 # velocity_scale = target_speed_mm_per_min / MAX_SPEED_MM_PER_MIN
-# Adjust this to match the actual maximum configured speed of your MoveIt setup.
-MAX_SPEED_MM_PER_MIN = 6000.0
+MAX_SPEED_MM_PER_MIN = 60000.0
+
+# Speed for the initial approach move to the print start position (mm/min).
+APPROACH_SPEED_MM_PER_MIN = 1000.0
 
 # Acceleration scaling factor applied to all Cartesian moves (0.0 – 1.0).
-# Set independently of velocity_scale. 1.0 = MoveIt's configured maximum.
 ACCELERATION_SCALE = 0.5
 
 # Cartesian path interpolation step (metres).  Smaller = smoother, slower to plan.
@@ -66,9 +64,8 @@ PLANNING_TIMEOUT = 30.0
 
 MOONRAKER_URL = "http://localhost:7125"
 
-# Fixed delay (seconds) inserted at the start of the extrusion script so that
-# Klipper's buffered commands stay in sync with the joint trajectory.
-# Increase if extrusion starts too early; decrease if it starts too late.
+# Delay (seconds) between sending the Klipper extrusion command and starting
+# robot motion.  Increase if extrusion starts too late; decrease if too early.
 KLIPPER_DELAY_SEC = 0.45
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -77,26 +74,6 @@ KLIPPER_DELAY_SEC = 0.45
 # ─── CSV loading ──────────────────────────────────────────────────────────────
 
 def load_csv(path: str) -> list:
-    """
-    Load a gcode_interpreter.py CSV output.
-
-    CSV columns  (from gcode_interpreter.py):
-      X, Y, Z, QX, QY, QZ, QW,
-      Toolhead_Speed_mm_per_min,
-      Extrusion_Length_mm,
-      Extrusion_Speed_mm_per_min,
-      Move_Type, Segment_ID, GCode_Line
-
-    Returns a list of waypoint dicts with keys:
-      x, y, z          – metres  (converted from mm)
-      qx, qy, qz, qw  – tool orientation quaternion
-      speed            – Toolhead_Speed in mm/min
-      extrusion_mm     – Extrusion_Length_mm (filament delta)
-      extrusion_speed  – Extrusion_Speed_mm_per_min
-      move_type        – 'extrusion' or 'travel'
-      segment_id       – integer group ID
-      gcode_line       – source line in the original G-code file
-    """
     waypoints = []
     with open(path, 'r') as fh:
         for raw_row in csv.reader(fh):
@@ -104,42 +81,31 @@ def load_csv(path: str) -> list:
             if not row or row[0].startswith('#'):
                 continue
             if row[0].upper() == 'X':
-                continue  # header row
+                continue
             if len(row) < 13:
                 continue
             try:
                 waypoints.append({
-                    'x':             float(row[0]) * 0.001,  # mm → m
-                    'y':             float(row[1]) * 0.001,
-                    'z':             float(row[2]) * 0.001,
-                    'qx':            float(row[3]),
-                    'qy':            float(row[4]),
-                    'qz':            float(row[5]),
-                    'qw':            float(row[6]),
-                    'speed':         float(row[7]),
-                    'extrusion_mm':  float(row[8]),
+                    'x':               float(row[0]) * 0.001,  # mm → m
+                    'y':               float(row[1]) * 0.001,
+                    'z':               float(row[2]) * 0.001,
+                    'qx':              float(row[3]),
+                    'qy':              float(row[4]),
+                    'qz':              float(row[5]),
+                    'qw':              float(row[6]),
+                    'speed':           float(row[7]),
+                    'extrusion_mm':    float(row[8]),
                     'extrusion_speed': float(row[9]),
-                    'move_type':     row[10],
-                    'segment_id':    int(float(row[11])),
-                    'gcode_line':    int(float(row[12])),
+                    'move_type':       row[10],
+                    'segment_id':      int(float(row[11])),
+                    'gcode_line':      int(float(row[12])),
                 })
             except (ValueError, IndexError):
-                pass  # skip malformed rows
+                pass
     return waypoints
 
 
 def group_by_segment(waypoints: list) -> list:
-    """
-    Group waypoints by their Segment_ID (assigned by gcode_interpreter).
-
-    Returns a list of segment dicts:
-      segment_id        – int
-      move_type         – 'extrusion' or 'travel'
-      waypoints         – list of waypoint dicts belonging to this segment
-      speed_mm_per_min  – toolhead speed (same for all waypoints in segment)
-      velocity_scale    – speed / MAX_SPEED_MM_PER_MIN, clamped to [0.01, 1.0]
-      total_extrusion   – sum of extrusion_mm across all waypoints in segment
-    """
     if not waypoints:
         return []
 
@@ -162,12 +128,12 @@ def group_by_segment(waypoints: list) -> list:
 def _build_segment(seg_id: int, wps: list) -> dict:
     speed = wps[0]['speed']
     return {
-        'segment_id':      seg_id,
-        'move_type':       wps[0]['move_type'],
-        'waypoints':       wps,
+        'segment_id':       seg_id,
+        'move_type':        wps[0]['move_type'],
+        'waypoints':        wps,
         'speed_mm_per_min': speed,
-        'velocity_scale':  min(1.0, max(0.01, speed / MAX_SPEED_MM_PER_MIN)),
-        'total_extrusion': sum(wp['extrusion_mm'] for wp in wps),
+        'velocity_scale':   min(1.0, max(0.01, speed / MAX_SPEED_MM_PER_MIN)),
+        'total_extrusion':  sum(wp['extrusion_mm'] for wp in wps),
     }
 
 
@@ -183,9 +149,7 @@ def _make_pose(wp: dict) -> Pose:
     return pose
 
 
-# ════════════════════════════════════════════════════════════════════════════════
-# EXTRUSION LOGIC
-# ════════════════════════════════════════════════════════════════════════════════
+# ─── Klipper communication ────────────────────────────────────────────────────
 
 class KlipperComm:
     """Send G-code to Klipper via the Moonraker HTTP API."""
@@ -194,7 +158,6 @@ class KlipperComm:
         self.url = url.rstrip('/')
 
     def connect(self) -> bool:
-        """Check that Moonraker is reachable and Klipper is ready."""
         try:
             with urllib.request.urlopen(f'{self.url}/printer/info', timeout=5) as r:
                 info = json.loads(r.read())
@@ -206,7 +169,6 @@ class KlipperComm:
             return False
 
     def send_gcode(self, script: str) -> bool:
-        """Send a multi-line G-code script to Klipper's buffer."""
         try:
             data = json.dumps({'script': script}).encode()
             req = urllib.request.Request(
@@ -223,176 +185,11 @@ class KlipperComm:
             return False
 
 
-def _segment_waypoint_timestamps(seg: dict) -> list:
-    """
-    Compute the time (seconds, relative to segment start) at which the
-    toolhead reaches each waypoint, using cumulative 3D path distance and
-    the segment's constant toolhead speed.
-
-    Returns a list of floats, one per waypoint (first entry is always 0.0).
-    """
-    wps = seg['waypoints']
-    speed_m_per_s = seg['speed_mm_per_min'] / 60000.0  # mm/min → m/s
-    timestamps = [0.0]
-    for i in range(1, len(wps)):
-        prev, cur = wps[i - 1], wps[i]
-        dx = cur['x'] - prev['x']
-        dy = cur['y'] - prev['y']
-        dz = cur['z'] - prev['z']
-        dist = math.sqrt(dx * dx + dy * dy + dz * dz)  # metres
-        dt = dist / speed_m_per_s if speed_m_per_s > 1e-9 else 0.0
-        timestamps.append(timestamps[-1] + dt)
-    return timestamps
-
-
-def build_extrusion_schedule(segments: list, planned: list) -> list:
-    """
-    Build the global extrusion schedule as a list of (timestamp_sec, gcode) pairs.
-
-    For each extrusion waypoint j (j >= 1) in an extrusion segment, the G1 E
-    command is stamped at the global time of waypoint j-1 — so extrusion starts
-    when the robot leaves the previous waypoint and finishes on arrival at j.
-
-    Travel segments produce no extrusion commands.
-
-    Returns a list of (float, str) sorted by timestamp.
-    """
-    schedule = []
-    cumulative_e = 0.0
-    global_seg_start = 0.0  # seconds
-
-    for seg, traj in zip(segments, planned):
-        # Segment duration from the planned trajectory's final timestamp.
-        seg_duration = 0.0
-        if traj is not None:
-            pts = traj.joint_trajectory.points
-            if pts:
-                t = pts[-1].time_from_start
-                seg_duration = t.sec + t.nanosec * 1e-9
-
-        if seg['move_type'] == 'extrusion':
-            wp_times = _segment_waypoint_timestamps(seg)
-            wps = seg['waypoints']
-            for j in range(1, len(wps)):
-                e_delta = wps[j]['extrusion_mm']
-                if e_delta < 1e-9:
-                    continue
-                cumulative_e += e_delta
-                ext_speed = wps[j]['extrusion_speed']  # mm/min
-                # Stamp at waypoint j-1: extrusion starts here, ends at j.
-                t_stamp = global_seg_start + wp_times[j - 1]
-                schedule.append((t_stamp, f'G1 E{cumulative_e:.4f} F{ext_speed:.4f}'))
-        else:
-            # Travel — no extrusion; still track cumulative E (should be zero deltas).
-            for wp in seg['waypoints']:
-                cumulative_e += wp['extrusion_mm']
-
-        global_seg_start += seg_duration
-
-    return schedule
-
-
-def schedule_to_gcode(schedule: list) -> str:
-    """
-    Convert a list of (timestamp_sec, gcode) pairs into a single G-code script
-    using G4 P<ms> dwell commands to reproduce the timing.
-
-    An initial G4 dwell of KLIPPER_DELAY_SEC is prepended to align Klipper's
-    buffer execution with the start of robot motion.
-    """
-    lines = ['M82']  # absolute extrusion mode
-
-    prev_t = 0.0
-    for t, cmd in schedule:
-        dt_ms = max(0, int((t - prev_t) * 1000))
-        if dt_ms > 0:
-            lines.append(f'G4 P{dt_ms}')
-        lines.append(cmd)
-        prev_t = t
-
-    return '\n'.join(lines)
-
-
-# ════════════════════════════════════════════════════════════════════════════════
-# BACKGROUND PLANNER
-# ════════════════════════════════════════════════════════════════════════════════
-
-class _BackgroundPlanner:
-    """
-    Dedicated ROS2 node that runs Cartesian path planning in a background thread.
-
-    Allows the main thread to submit a plan for segment N+1 while segment N is
-    executing, so the plan is ready the moment execution finishes.
-    """
-
-    def __init__(self):
-        self._node   = rclpy.create_node('gcode_planner_bg')
-        self._client = self._node.create_client(
-            GetCartesianPath, '/compute_cartesian_path')
-        self._ros_exec = rclpy.executors.SingleThreadedExecutor()
-        self._ros_exec.add_node(self._node)
-        self._thread = threading.Thread(
-            target=self._ros_exec.spin, daemon=True)
-        self._thread.start()
-        self._client.wait_for_service()
-
-    def submit(self, poses: list, velocity_scale: float,
-               start_state=None) -> concurrent.futures.Future:
-        """
-        Non-blocking: submit a Cartesian path planning request.
-        Returns a concurrent.futures.Future that resolves to a
-        RobotTrajectory on success, or None on failure.
-        """
-        req = GetCartesianPath.Request()
-        req.header.stamp    = self._node.get_clock().now().to_msg()
-        req.header.frame_id = 'base_link'
-        req.group_name      = 'ur_arm'
-        req.link_name       = 'tool_tip'
-        req.waypoints       = poses
-        req.max_step        = CARTESIAN_STEP
-        req.jump_threshold  = CARTESIAN_JUMP_THRESHOLD
-        req.avoid_collisions = True
-        req.max_velocity_scaling_factor     = float(velocity_scale)
-        req.max_acceleration_scaling_factor = float(ACCELERATION_SCALE)
-        if start_state is not None:
-            req.start_state = start_state
-
-        ros_fut = self._client.call_async(req)
-        py_fut  = concurrent.futures.Future()
-
-        def _cb(f):
-            try:
-                resp = f.result()
-                if resp.fraction >= MIN_CARTESIAN_FRACTION:
-                    py_fut.set_result(resp.solution)
-                else:
-                    py_fut.set_result(None)
-            except Exception:
-                py_fut.set_result(None)
-
-        ros_fut.add_done_callback(_cb)
-        return py_fut
-
-    def shutdown(self):
-        self._ros_exec.shutdown(await_futures=False)
-
-
 # ════════════════════════════════════════════════════════════════════════════════
 # MOVEMENT LOGIC
 # ════════════════════════════════════════════════════════════════════════════════
 
 class GCodeExecutorNode(Node):
-    """
-    Executes a gcode print path on the UR5e via MoveIt Cartesian paths.
-
-    Execution flow
-    --------------
-    1. PTP move to the first waypoint (gets the arm to the print start safely).
-    2. Pre-plan all segments as Cartesian paths, chaining each trajectory into
-       the next so the planner knows the exact joint state at every handoff.
-    3. Ask for user confirmation before any motion begins.
-    4. Execute each pre-planned trajectory in order.
-    """
 
     def __init__(self):
         super().__init__('gcode_executor')
@@ -407,10 +204,7 @@ class GCodeExecutorNode(Node):
         self._exec_client.wait_for_server()
         self.get_logger().info('MoveIt services ready.')
 
-    # ── Internal helpers ──────────────────────────────────────────────────────
-
     def _get_final_robot_state(self, trajectory) -> RobotState:
-        """Extract the ending RobotState from a trajectory for chained planning."""
         last_pt = trajectory.joint_trajectory.points[-1]
         rs = RobotState()
         rs.joint_state.name     = list(trajectory.joint_trajectory.joint_names)
@@ -418,24 +212,8 @@ class GCodeExecutorNode(Node):
         rs.joint_state.velocity = list(last_pt.velocities) if last_pt.velocities else []
         return rs
 
-    # ── Cartesian path planning ───────────────────────────────────────────────
-
     def plan_cartesian_path(self, poses: list, velocity_scale: float,
                             start_state: RobotState = None):
-        """
-        Plan a continuous Cartesian path through *poses* at *velocity_scale*.
-
-        Parameters
-        ----------
-        poses          : ordered list of target Pose messages in base_link frame
-        velocity_scale : fraction of MAX_SPEED_MM_PER_MIN  (0.0 – 1.0)
-        start_state    : optional RobotState for chained planning; when None
-                         the current robot state is used
-
-        Returns
-        -------
-        RobotTrajectory on success, None on failure.
-        """
         req = GetCartesianPath.Request()
         req.header.stamp    = self.get_clock().now().to_msg()
         req.header.frame_id = 'base_link'
@@ -467,10 +245,7 @@ class GCodeExecutorNode(Node):
 
         return response.solution
 
-    # ── Trajectory execution ──────────────────────────────────────────────────
-
     def execute_trajectory(self, trajectory, timeout_sec: float = 30.0) -> bool:
-        """Execute a pre-planned RobotTrajectory.  Returns True on success."""
         pts = trajectory.joint_trajectory.points
         if pts:
             last_t = pts[-1].time_from_start
@@ -499,10 +274,7 @@ class GCodeExecutorNode(Node):
 
         return True
 
-    # ── Main execution flow ───────────────────────────────────────────────────
-
     def run(self, segments: list) -> None:
-        """Execute all segments: approach → pre-plan → confirm → execute."""
 
         if not segments:
             self.get_logger().error('No segments to execute.')
@@ -518,7 +290,8 @@ class GCodeExecutorNode(Node):
               f"{first_pose.position.z:.4f})")
         print(f"{'='*60}")
 
-        approach_traj = self.plan_cartesian_path([first_pose], velocity_scale=0.2)
+        approach_vel = APPROACH_SPEED_MM_PER_MIN / MAX_SPEED_MM_PER_MIN
+        approach_traj = self.plan_cartesian_path([first_pose], velocity_scale=approach_vel)
         if approach_traj is None:
             self.get_logger().error('Cartesian approach plan failed. Aborting.')
             return
@@ -530,15 +303,13 @@ class GCodeExecutorNode(Node):
         print(f"{'='*60}")
 
         planned     = []
-        # Seed start_state from the approach end so chained planning is accurate.
-        start_state = self._get_final_robot_state(approach_traj) if approach_traj else None
+        start_state = self._get_final_robot_state(approach_traj)
 
         for i, seg in enumerate(segments):
             wps       = seg['waypoints']
             move_type = seg['move_type']
             vel_scale = seg['velocity_scale']
 
-            # Segment 0: robot will arrive at wps[0] via approach, skip that point.
             path_wps = wps[1:] if i == 0 else wps
 
             if not path_wps:
@@ -577,10 +348,10 @@ class GCodeExecutorNode(Node):
                 t = pts[-1].time_from_start
                 total_secs += t.sec + t.nanosec * 1e-9
 
-        total_extrusion  = sum(s['total_extrusion'] for s in segments
-                               if s['move_type'] == 'extrusion')
-        extrusion_segs   = sum(1 for s in segments if s['move_type'] == 'extrusion')
-        travel_segs      = sum(1 for s in segments if s['move_type'] == 'travel')
+        total_extrusion = sum(s['total_extrusion'] for s in segments
+                              if s['move_type'] == 'extrusion')
+        extrusion_segs  = sum(1 for s in segments if s['move_type'] == 'extrusion')
+        travel_segs     = sum(1 for s in segments if s['move_type'] == 'travel')
         h = int(total_secs // 3600)
         m = int((total_secs % 3600) // 60)
         s = int(total_secs % 60)
@@ -599,7 +370,7 @@ class GCodeExecutorNode(Node):
         if not klipper_ready:
             print('  WARNING: Klipper not reachable — extrusion will be skipped.')
 
-        # ── Confirm: move to first point ──────────────────────────────────────
+        # ── Confirm: move to start position ───────────────────────────────────
         try:
             ans = input("\nPress ENTER to move to start position, or 'q' to quit: ")
         except EOFError:
@@ -615,7 +386,6 @@ class GCodeExecutorNode(Node):
         if not self.execute_trajectory(approach_traj):
             self.get_logger().error('Failed to execute approach. Aborting.')
             return
-
         print('  At start position.')
 
         # ── Confirm: start print ──────────────────────────────────────────────
@@ -636,26 +406,7 @@ class GCodeExecutorNode(Node):
         skip_count   = 0
         cumulative_e = 0.0
 
-        # Lookahead planner: while segment N executes, plan segment N+1 in the
-        # background using the predicted end state.  On completion we validate
-        # and use the result immediately — zero inter-segment delay in the
-        # common case.  If the lookahead is stale (execution drift) we fall
-        # back to a synchronous re-plan from the actual current state.
-        bg = _BackgroundPlanner()
-        lookahead: concurrent.futures.Future | None = None  # plan for next seg
-
-        def _submit_lookahead(seg_idx: int, end_state):
-            """Submit a background plan for segment seg_idx. Returns a Future or None."""
-            if seg_idx >= len(segments) or planned[seg_idx] is None:
-                return None
-            next_seg = segments[seg_idx]
-            wps = next_seg['waypoints']  # seg_idx is never 0 here
-            if not wps:
-                return None
-            next_poses = [_make_pose(wp) for wp in wps]
-            return bg.submit(next_poses, next_seg['velocity_scale'], end_state)
-
-        for i, (seg, pretraj) in enumerate(zip(segments, planned)):
+        for i, (seg, traj) in enumerate(zip(segments, planned)):
             move_type = seg['move_type']
             last_pose = _make_pose(seg['waypoints'][-1])
 
@@ -664,91 +415,36 @@ class GCodeExecutorNode(Node):
                   f"{last_pose.position.y:.4f}, "
                   f"{last_pose.position.z:.4f})")
 
-            if pretraj is None:
+            if traj is None:
                 print('    Already at target — skipping.')
                 skip_count += 1
-                lookahead = None
                 continue
 
-            wps      = seg['waypoints']
-            path_wps = wps[1:] if i == 0 else wps
-            if not path_wps:
-                print('    No waypoints — skipping.')
-                skip_count += 1
-                lookahead = None
-                continue
-            poses = [_make_pose(wp) for wp in path_wps]
-
-            # ── Obtain trajectory (lookahead or synchronous plan) ─────────────
-            traj = None
-            if lookahead is not None:
-                try:
-                    traj = lookahead.result(timeout=PLANNING_TIMEOUT)
-                except Exception:
-                    traj = None
-                lookahead = None
-                if traj is None:
-                    print('    Lookahead missed — re-planning…', end='', flush=True)
-                    traj = self.plan_cartesian_path(
-                        poses, seg['velocity_scale'], start_state=None)
-                    print(' OK' if traj else ' FAILED')
-            else:
-                print('    Planning…', end='', flush=True)
-                traj = self.plan_cartesian_path(
-                    poses, seg['velocity_scale'], start_state=None)
-                print(' OK' if traj else ' FAILED')
-
-            if traj is None:
-                self.get_logger().error(f'Cartesian planning failed for segment {i+1}. Aborting.')
-                bg.shutdown()
-                return
-
-            # ── Guard: skip zero-duration trajectories ────────────────────────
-            pts    = traj.joint_trajectory.points
-            last_t = pts[-1].time_from_start if pts else None
-            traj_duration = (last_t.sec + last_t.nanosec * 1e-9) if last_t else 0.0
-            if len(pts) < 2 or traj_duration < 1e-3:
-                print(f'    Near-zero duration — already at target, skipping.')
-                skip_count += 1
-                continue
-
-            # ── Submit lookahead for next segment while this one executes ─────
-            end_state = self._get_final_robot_state(traj)
-            result = _submit_lookahead(i + 1, end_state)
-            if result:
-                lookahead = result
-
-            # ── Send extrusion command ────────────────────────────────────────
+            # ── Send Klipper extrusion command ────────────────────────────────
             if klipper_ready and move_type == 'extrusion' and seg['total_extrusion'] > 1e-9:
-                seg_duration = traj_duration
+                pts = traj.joint_trajectory.points
+                seg_duration = 0.0
+                if pts:
+                    t = pts[-1].time_from_start
+                    seg_duration = t.sec + t.nanosec * 1e-9
                 if seg_duration > 1e-9:
                     cumulative_e += seg['total_extrusion']
                     feedrate = (seg['total_extrusion'] / seg_duration) * 60.0
                     gcode_cmd = f'M82\nG1 E{cumulative_e:.4f} F{feedrate:.4f}'
                     print(f'    [Klipper] E{cumulative_e:.4f} F{feedrate:.2f} mm/min  ({seg_duration:.2f}s)')
-                    threading.Thread(target=klipper.send_gcode, args=(gcode_cmd,), daemon=True).start()
+                    threading.Thread(
+                        target=klipper.send_gcode, args=(gcode_cmd,), daemon=True).start()
                     if KLIPPER_DELAY_SEC > 0:
                         time.sleep(KLIPPER_DELAY_SEC)
 
             ok = self.execute_trajectory(traj)
             if not ok:
-                # Execution failed — discard lookahead and re-plan from current state.
-                lookahead = None
-                print('    Execution failed — re-planning from current state…', end='', flush=True)
-                traj = self.plan_cartesian_path(
-                    poses, seg['velocity_scale'], start_state=None)
-                if traj is not None:
-                    print(' OK')
-                    ok = self.execute_trajectory(traj)
-                if not ok:
-                    self.get_logger().error(f'Cartesian execution failed for segment {i+1}. Aborting.')
-                    bg.shutdown()
-                    return
+                print(f'    WARNING: Execution failed — skipping segment {i+1}.')
+                skip_count += 1
+                continue
 
             ok_count += 1
             print('    OK')
-
-        bg.shutdown()
 
         print(f"\n{'='*60}")
         print(f" Done.")
