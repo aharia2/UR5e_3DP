@@ -64,9 +64,16 @@ PLANNING_TIMEOUT = 30.0
 
 MOONRAKER_URL = "http://localhost:7125"
 
-# Delay (seconds) between sending the Klipper extrusion command and starting
-# robot motion.  Increase if extrusion starts too late; decrease if too early.
+# Delay (seconds) between firing the first Klipper chunk and starting robot
+# motion.  Gives Klipper time to buffer the first chunk before the arm moves.
 KLIPPER_DELAY_SEC = 0.45
+
+# Target buffer duration per chunk (ms).  Each chunk is the minimum number of
+# consecutive waypoints whose total extrusion time >= this value.  Must be
+# larger than the Moonraker HTTP round-trip latency so the ping-pong threads
+# always deliver the next chunk before the current one finishes.
+# Set to 0 to send the entire segment as one script (risks "Timer too close").
+KLIPPER_CHUNK_TARGET_MS = 800
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -147,6 +154,79 @@ def _make_pose(wp: dict) -> Pose:
     pose.orientation.z = wp['qz']
     pose.orientation.w = wp['qw']
     return pose
+
+
+# ─── Klipper extrusion helpers ────────────────────────────────────────────────
+
+def _build_extrusion_chunks(waypoints: list, e_base: float,
+                             chunk_target_ms: float) -> tuple:
+    """
+    Convert a segment's waypoints into time-based chunks for ping-pong sending.
+
+    Each move uses the per-waypoint extrusion_speed from the CSV (not an
+    averaged feedrate), and absolute cumulative E values continuing from e_base.
+
+    Returns (chunks, final_cumulative_e) where chunks is a list of lists of
+    (cumulative_e, feedrate, duration_ms) tuples.
+    """
+    move_lines   = []
+    cumulative_e = e_base
+    for wp in waypoints:
+        if wp['extrusion_mm'] <= 1e-9 or wp['extrusion_speed'] <= 0:
+            continue
+        cumulative_e  += wp['extrusion_mm']
+        feedrate       = wp['extrusion_speed']
+        duration_ms    = (wp['extrusion_mm'] / feedrate) * 60.0 * 1000.0
+        move_lines.append((cumulative_e, feedrate, duration_ms))
+
+    if not move_lines:
+        return [], e_base
+
+    if chunk_target_ms <= 0:
+        return [move_lines], cumulative_e
+
+    chunks = []
+    current, current_ms = [], 0.0
+    for move in move_lines:
+        current.append(move)
+        current_ms += move[2]
+        if current_ms >= chunk_target_ms:
+            chunks.append(current)
+            current, current_ms = [], 0.0
+    if current:
+        chunks.append(current)
+
+    return chunks, cumulative_e
+
+
+def _send_extrusion_pingpong(klipper, chunks: list):
+    """
+    Send extrusion chunks in ping-pong fashion so Klipper's move queue never
+    empties between chunks.  Two threads alternate: while Thread A is blocked
+    waiting for chunk N to finish, Thread B sends chunk N+1 so it arrives in
+    Klipper's queue before N completes.
+    """
+    if not chunks:
+        return
+
+    def _send_chunk(chunk):
+        script = "\n".join(
+            ["M82"] + [f"G1 E{e:.4f} F{f:.4f}" for e, f, _ in chunk]
+        )
+        klipper.send_gcode(script)
+
+    threads = [None, None]
+    for idx, chunk in enumerate(chunks):
+        slot = idx % 2
+        if threads[slot] is not None:
+            threads[slot].join()
+        t = threading.Thread(target=_send_chunk, args=(chunk,), daemon=True)
+        threads[slot] = t
+        t.start()
+
+    for t in threads:
+        if t is not None:
+            t.join()
 
 
 # ─── Klipper communication ────────────────────────────────────────────────────
@@ -422,20 +502,24 @@ class GCodeExecutorNode(Node):
 
             # ── Send Klipper extrusion command ────────────────────────────────
             if klipper_ready and move_type == 'extrusion' and seg['total_extrusion'] > 1e-9:
-                pts = traj.joint_trajectory.points
-                seg_duration = 0.0
-                if pts:
-                    t = pts[-1].time_from_start
-                    seg_duration = t.sec + t.nanosec * 1e-9
-                if seg_duration > 1e-9:
-                    cumulative_e += seg['total_extrusion']
-                    feedrate = (seg['total_extrusion'] / seg_duration) * 60.0
-                    gcode_cmd = f'M82\nG1 E{cumulative_e:.4f} F{feedrate:.4f}'
-                    print(f'    [Klipper] E{cumulative_e:.4f} F{feedrate:.2f} mm/min  ({seg_duration:.2f}s)')
-                    threading.Thread(
-                        target=klipper.send_gcode, args=(gcode_cmd,), daemon=True).start()
-                    if KLIPPER_DELAY_SEC > 0:
-                        time.sleep(KLIPPER_DELAY_SEC)
+                chunks, new_e = _build_extrusion_chunks(
+                    seg['waypoints'], cumulative_e, KLIPPER_CHUNK_TARGET_MS)
+                cumulative_e = new_e
+
+                n_moves = sum(len(c) for c in chunks)
+                total_e  = seg['total_extrusion']
+                print(f'    [Klipper] {n_moves} moves  '
+                      f'E+{total_e:.4f} → {cumulative_e:.4f}  '
+                      f'{len(chunks)} chunk(s)  '
+                      f'target {KLIPPER_CHUNK_TARGET_MS} ms each')
+
+                threading.Thread(
+                    target=_send_extrusion_pingpong,
+                    args=(klipper, chunks),
+                    daemon=True).start()
+
+                if KLIPPER_DELAY_SEC > 0:
+                    time.sleep(KLIPPER_DELAY_SEC)
 
             ok = self.execute_trajectory(traj)
             if not ok:
