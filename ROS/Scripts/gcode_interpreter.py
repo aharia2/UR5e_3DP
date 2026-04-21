@@ -172,20 +172,30 @@ def parse_gcode(path):
 
 def assign_segments(waypoints):
     """
-    Group consecutive waypoints of the same move_type into segments.
+    Group consecutive waypoints of the same move_type AND same Z into segments.
+    A Z increase (new layer) always starts a new segment, even if the move_type
+    does not change.  This is necessary because layer changes in PrusaSlicer
+    gcode are encoded as a filtered Z-only G1 with no intervening XY travel,
+    so without this check all layers would collapse into one extrusion segment.
     Returns list of waypoints with 'segment_id' added.
     """
     if not waypoints:
         return waypoints
 
+    Z_THRESHOLD = 1e-4  # 0.1 mm — ignore floating-point noise within a layer
+
     segment_id = 0
     prev_type = waypoints[0]['move_type']
+    prev_z    = waypoints[0]['z']
     waypoints[0]['segment_id'] = segment_id
 
     for wp in waypoints[1:]:
-        if wp['move_type'] != prev_type:
+        z_changed   = abs(wp['z'] - prev_z) > Z_THRESHOLD
+        type_changed = wp['move_type'] != prev_type
+        if type_changed or z_changed:
             segment_id += 1
             prev_type = wp['move_type']
+            prev_z    = wp['z']
         wp['segment_id'] = segment_id
 
     return waypoints

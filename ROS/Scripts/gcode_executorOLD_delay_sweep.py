@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 """
-gcode_executor.py
-=================
-Reads the CSV output of gcode_interpreter.py and executes the print path on
-the UR5e via MoveIt's compute_cartesian_path.
+gcode_executorOLD_delay_sweep.py
+=================================
+Clone of gcode_executorOLD.py with one addition: at every Z increase
+(i.e. every new print layer), KLIPPER_DELAY_SEC is decreased by
+DELAY_STEP_SEC.
 
-Each segment (a group of consecutive same-type waypoints sharing a Segment_ID)
-is planned as one continuous Cartesian path.  Toolhead speed is matched by
-scaling the velocity: velocity_scale = target_speed / MAX_SPEED_MM_PER_MIN.
+This lets you set a starting delay, print a calibration box, and then
+inspect each layer to find the optimal delay value — each layer will have
+been printed with a slightly shorter delay than the one below it.
 
 Usage
 -----
-  python3 gcode_executor.py <interpreted_gcode.csv>
+  python3 gcode_executorOLD_delay_sweep.py <interpreted_gcode.csv>
 
 Example
 -------
-  python3 gcode_executor.py "gcode_interpreted files/40x40x40.csv"
+  python3 gcode_executorOLD_delay_sweep.py "gcode_interpreted files/40x40x40.csv"
 """
 
 import concurrent.futures
@@ -41,22 +42,18 @@ from moveit_msgs.msg import RobotState
 # ─── User settings ────────────────────────────────────────────────────────────
 
 # Maximum TCP speed of the robot at velocity_scale = 1.0  (mm/min).
-# velocity_scale = target_speed_mm_per_min / MAX_SPEED_MM_PER_MIN
-# Adjust this to match the actual maximum configured speed of your MoveIt setup.
 MAX_SPEED_MM_PER_MIN = 60000.0
 
 # Acceleration scaling factor applied to all Cartesian moves (0.0 – 1.0).
-# Set independently of velocity_scale. 1.0 = MoveIt's configured maximum.
 ACCELERATION_SCALE = 0.5
 
-# Cartesian path interpolation step (metres).  Smaller = smoother, slower to plan.
+# Cartesian path interpolation step (metres).
 CARTESIAN_STEP = 0.001
 
-# Jump threshold for GetCartesianPath.  4.0 is a safe default.
+# Jump threshold for GetCartesianPath.
 CARTESIAN_JUMP_THRESHOLD = 4.0
 
-# Minimum fraction of the requested Cartesian path that must be computed
-# before the result is accepted.
+# Minimum fraction of the requested Cartesian path that must be computed.
 MIN_CARTESIAN_FRACTION = 0.95
 
 # Timeout (seconds) for each planning service call.
@@ -66,10 +63,15 @@ PLANNING_TIMEOUT = 2000.0
 
 MOONRAKER_URL = "http://localhost:7125"
 
-# Fixed delay (seconds) inserted at the start of the extrusion script so that
-# Klipper's buffered commands stay in sync with the joint trajectory.
-# Increase if extrusion starts too early; decrease if it starts too late.
-KLIPPER_DELAY_SEC = 0.36
+# Starting delay (seconds) inserted before executing the extrusion trajectory
+# so that Klipper's buffered commands stay in sync with the joint trajectory.
+# This is the delay used for layer 1.  Each subsequent layer decreases by
+# DELAY_STEP_SEC.
+KLIPPER_DELAY_SEC = 0.8
+
+# Amount (seconds) to subtract from the delay at each new layer.
+# Example: 0.02 means layer 1 = 0.45 s, layer 2 = 0.43 s, layer 3 = 0.41 s …
+DELAY_STEP_SEC = 0.01
 
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -223,96 +225,6 @@ class KlipperComm:
             return False
 
 
-def _segment_waypoint_timestamps(seg: dict) -> list:
-    """
-    Compute the time (seconds, relative to segment start) at which the
-    toolhead reaches each waypoint, using cumulative 3D path distance and
-    the segment's constant toolhead speed.
-
-    Returns a list of floats, one per waypoint (first entry is always 0.0).
-    """
-    wps = seg['waypoints']
-    speed_m_per_s = seg['speed_mm_per_min'] / 60000.0  # mm/min → m/s
-    timestamps = [0.0]
-    for i in range(1, len(wps)):
-        prev, cur = wps[i - 1], wps[i]
-        dx = cur['x'] - prev['x']
-        dy = cur['y'] - prev['y']
-        dz = cur['z'] - prev['z']
-        dist = math.sqrt(dx * dx + dy * dy + dz * dz)  # metres
-        dt = dist / speed_m_per_s if speed_m_per_s > 1e-9 else 0.0
-        timestamps.append(timestamps[-1] + dt)
-    return timestamps
-
-
-def build_extrusion_schedule(segments: list, planned: list) -> list:
-    """
-    Build the global extrusion schedule as a list of (timestamp_sec, gcode) pairs.
-
-    For each extrusion waypoint j (j >= 1) in an extrusion segment, the G1 E
-    command is stamped at the global time of waypoint j-1 — so extrusion starts
-    when the robot leaves the previous waypoint and finishes on arrival at j.
-
-    Travel segments produce no extrusion commands.
-
-    Returns a list of (float, str) sorted by timestamp.
-    """
-    schedule = []
-    cumulative_e = 0.0
-    global_seg_start = 0.0  # seconds
-
-    for seg, traj in zip(segments, planned):
-        # Segment duration from the planned trajectory's final timestamp.
-        seg_duration = 0.0
-        if traj is not None:
-            pts = traj.joint_trajectory.points
-            if pts:
-                t = pts[-1].time_from_start
-                seg_duration = t.sec + t.nanosec * 1e-9
-
-        if seg['move_type'] == 'extrusion':
-            wp_times = _segment_waypoint_timestamps(seg)
-            wps = seg['waypoints']
-            for j in range(1, len(wps)):
-                e_delta = wps[j]['extrusion_mm']
-                if e_delta < 1e-9:
-                    continue
-                cumulative_e += e_delta
-                ext_speed = wps[j]['extrusion_speed']  # mm/min
-                # Stamp at waypoint j-1: extrusion starts here, ends at j.
-                t_stamp = global_seg_start + wp_times[j - 1]
-                schedule.append((t_stamp, f'G1 E{cumulative_e:.4f} F{ext_speed:.4f}'))
-        else:
-            # Travel — no extrusion; still track cumulative E (should be zero deltas).
-            for wp in seg['waypoints']:
-                cumulative_e += wp['extrusion_mm']
-
-        global_seg_start += seg_duration
-
-    return schedule
-
-
-def schedule_to_gcode(schedule: list) -> str:
-    """
-    Convert a list of (timestamp_sec, gcode) pairs into a single G-code script
-    using G4 P<ms> dwell commands to reproduce the timing.
-
-    An initial G4 dwell of KLIPPER_DELAY_SEC is prepended to align Klipper's
-    buffer execution with the start of robot motion.
-    """
-    lines = ['M82']  # absolute extrusion mode
-
-    prev_t = 0.0
-    for t, cmd in schedule:
-        dt_ms = max(0, int((t - prev_t) * 1000))
-        if dt_ms > 0:
-            lines.append(f'G4 P{dt_ms}')
-        lines.append(cmd)
-        prev_t = t
-
-    return '\n'.join(lines)
-
-
 # ════════════════════════════════════════════════════════════════════════════════
 # BACKGROUND PLANNER
 # ════════════════════════════════════════════════════════════════════════════════
@@ -320,9 +232,6 @@ def schedule_to_gcode(schedule: list) -> str:
 class _BackgroundPlanner:
     """
     Dedicated ROS2 node that runs Cartesian path planning in a background thread.
-
-    Allows the main thread to submit a plan for segment N+1 while segment N is
-    executing, so the plan is ready the moment execution finishes.
     """
 
     def __init__(self):
@@ -338,11 +247,6 @@ class _BackgroundPlanner:
 
     def submit(self, poses: list, velocity_scale: float,
                start_state=None) -> concurrent.futures.Future:
-        """
-        Non-blocking: submit a Cartesian path planning request.
-        Returns a concurrent.futures.Future that resolves to a
-        RobotTrajectory on success, or None on failure.
-        """
         req = GetCartesianPath.Request()
         req.header.stamp    = self._node.get_clock().now().to_msg()
         req.header.frame_id = 'base_link'
@@ -382,17 +286,6 @@ class _BackgroundPlanner:
 # ════════════════════════════════════════════════════════════════════════════════
 
 class GCodeExecutorNode(Node):
-    """
-    Executes a gcode print path on the UR5e via MoveIt Cartesian paths.
-
-    Execution flow
-    --------------
-    1. PTP move to the first waypoint (gets the arm to the print start safely).
-    2. Pre-plan all segments as Cartesian paths, chaining each trajectory into
-       the next so the planner knows the exact joint state at every handoff.
-    3. Ask for user confirmation before any motion begins.
-    4. Execute each pre-planned trajectory in order.
-    """
 
     def __init__(self):
         super().__init__('gcode_executor')
@@ -410,7 +303,6 @@ class GCodeExecutorNode(Node):
     # ── Internal helpers ──────────────────────────────────────────────────────
 
     def _get_final_robot_state(self, trajectory) -> RobotState:
-        """Extract the ending RobotState from a trajectory for chained planning."""
         last_pt = trajectory.joint_trajectory.points[-1]
         rs = RobotState()
         rs.joint_state.name     = list(trajectory.joint_trajectory.joint_names)
@@ -422,20 +314,6 @@ class GCodeExecutorNode(Node):
 
     def plan_cartesian_path(self, poses: list, velocity_scale: float,
                             start_state: RobotState = None):
-        """
-        Plan a continuous Cartesian path through *poses* at *velocity_scale*.
-
-        Parameters
-        ----------
-        poses          : ordered list of target Pose messages in base_link frame
-        velocity_scale : fraction of MAX_SPEED_MM_PER_MIN  (0.0 – 1.0)
-        start_state    : optional RobotState for chained planning; when None
-                         the current robot state is used
-
-        Returns
-        -------
-        RobotTrajectory on success, None on failure.
-        """
         req = GetCartesianPath.Request()
         req.header.stamp    = self.get_clock().now().to_msg()
         req.header.frame_id = 'base_link'
@@ -470,7 +348,6 @@ class GCodeExecutorNode(Node):
     # ── Trajectory execution ──────────────────────────────────────────────────
 
     def execute_trajectory(self, trajectory, timeout_sec: float = 30.0) -> bool:
-        """Execute a pre-planned RobotTrajectory.  Returns True on success."""
         pts = trajectory.joint_trajectory.points
         if pts:
             last_t = pts[-1].time_from_start
@@ -530,7 +407,6 @@ class GCodeExecutorNode(Node):
         print(f"{'='*60}")
 
         planned     = []
-        # Seed start_state from the approach end so chained planning is accurate.
         start_state = self._get_final_robot_state(approach_traj) if approach_traj else None
 
         for i, seg in enumerate(segments):
@@ -538,7 +414,6 @@ class GCodeExecutorNode(Node):
             move_type = seg['move_type']
             vel_scale = seg['velocity_scale']
 
-            # Segment 0: robot will arrive at wps[0] via approach, skip that point.
             path_wps = wps[1:] if i == 0 else wps
 
             if not path_wps:
@@ -591,6 +466,9 @@ class GCodeExecutorNode(Node):
         print(f"  Travel segments    : {travel_segs}")
         print(f"  Total extrusion    : {total_extrusion:.2f} mm")
         print(f"  Estimated time     : {h:02d}h {m:02d}m {s:02d}s")
+        print(f"\n  Delay sweep settings:")
+        print(f"    Starting delay   : {KLIPPER_DELAY_SEC:.3f} s  (layer 1)")
+        print(f"    Decrease per layer: {DELAY_STEP_SEC:.3f} s")
         print(f"{'='*60}")
 
         # ── Connect to Klipper ────────────────────────────────────────────────
@@ -629,27 +507,29 @@ class GCodeExecutorNode(Node):
 
         # ── Step 4: Execute all segments ──────────────────────────────────────
         print(f"\n{'='*60}")
-        print(f" Step 4: Executing {len(planned)} segments")
+        print(f" Step 4: Executing {len(planned)} segments  (delay sweep active)")
         print(f"{'='*60}")
 
         ok_count     = 0
         skip_count   = 0
         cumulative_e = 0.0
 
-        # Lookahead planner: while segment N executes, plan segment N+1 in the
-        # background using the predicted end state.  On completion we validate
-        # and use the result immediately — zero inter-segment delay in the
-        # common case.  If the lookahead is stale (execution drift) we fall
-        # back to a synchronous re-plan from the actual current state.
+        # ── Delay sweep state ─────────────────────────────────────────────────
+        current_delay    = KLIPPER_DELAY_SEC   # decreases each new layer
+        current_layer    = 1                   # 1-indexed for display
+        # Track the Z height of the layer currently being printed.
+        # Use the first waypoint's Z as the baseline.
+        current_layer_z  = segments[0]['waypoints'][0]['z']
+        Z_THRESHOLD      = 0.0001              # 0.1 mm — ignore sub-layer Z wobble
+
         bg = _BackgroundPlanner()
-        lookahead: concurrent.futures.Future | None = None  # plan for next seg
+        lookahead: concurrent.futures.Future | None = None
 
         def _submit_lookahead(seg_idx: int, end_state):
-            """Submit a background plan for segment seg_idx. Returns a Future or None."""
             if seg_idx >= len(segments) or planned[seg_idx] is None:
                 return None
             next_seg = segments[seg_idx]
-            wps = next_seg['waypoints']  # seg_idx is never 0 here
+            wps = next_seg['waypoints']
             if not wps:
                 return None
             next_poses = [_make_pose(wp) for wp in wps]
@@ -658,6 +538,16 @@ class GCodeExecutorNode(Node):
         for i, (seg, pretraj) in enumerate(zip(segments, planned)):
             move_type = seg['move_type']
             last_pose = _make_pose(seg['waypoints'][-1])
+
+            # ── Layer detection ───────────────────────────────────────────────
+            seg_z = seg['waypoints'][0]['z']
+            if seg_z > current_layer_z + Z_THRESHOLD:
+                current_layer   += 1
+                current_delay    = max(0.0, current_delay - DELAY_STEP_SEC)
+                current_layer_z  = seg_z
+                print(f"\n  *** NEW LAYER {current_layer}  "
+                      f"Z={seg_z*1000:.3f} mm  "
+                      f"delay={current_delay:.3f} s ***")
 
             print(f"\n  Seg {i+1:>4}/{len(segments)}: {move_type:10s}  "
                   f"→ ({last_pose.position.x:.4f}, "
@@ -703,7 +593,6 @@ class GCodeExecutorNode(Node):
                 bg.shutdown()
                 return
 
-            # ── Guard: skip zero-duration trajectories ────────────────────────
             pts    = traj.joint_trajectory.points
             last_t = pts[-1].time_from_start if pts else None
             traj_duration = (last_t.sec + last_t.nanosec * 1e-9) if last_t else 0.0
@@ -712,27 +601,29 @@ class GCodeExecutorNode(Node):
                 skip_count += 1
                 continue
 
-            # ── Submit lookahead for next segment while this one executes ─────
             end_state = self._get_final_robot_state(traj)
             result = _submit_lookahead(i + 1, end_state)
             if result:
                 lookahead = result
 
-            # ── Send extrusion command ────────────────────────────────────────
+            # ── Send extrusion command (with current layer's delay) ────────────
             if klipper_ready and move_type == 'extrusion' and seg['total_extrusion'] > 1e-9:
                 seg_duration = traj_duration
                 if seg_duration > 1e-9:
                     cumulative_e += seg['total_extrusion']
                     feedrate = (seg['total_extrusion'] / seg_duration) * 60.0
                     gcode_cmd = f'M82\nG1 E{cumulative_e:.4f} F{feedrate:.4f}'
-                    print(f'    [Klipper] E{cumulative_e:.4f} F{feedrate:.2f} mm/min  ({seg_duration:.2f}s)')
-                    threading.Thread(target=klipper.send_gcode, args=(gcode_cmd,), daemon=True).start()
-                    if KLIPPER_DELAY_SEC > 0:
-                        time.sleep(KLIPPER_DELAY_SEC)
+                    print(f'    [Klipper] layer={current_layer}  '
+                          f'delay={current_delay:.3f}s  '
+                          f'E{cumulative_e:.4f} F{feedrate:.2f} mm/min  '
+                          f'({seg_duration:.2f}s)')
+                    threading.Thread(
+                        target=klipper.send_gcode, args=(gcode_cmd,), daemon=True).start()
+                    if current_delay > 0:
+                        time.sleep(current_delay)
 
             ok = self.execute_trajectory(traj)
             if not ok:
-                # Execution failed — discard lookahead and re-plan from current state.
                 lookahead = None
                 print('    Execution failed — re-planning from current state…', end='', flush=True)
                 traj = self.plan_cartesian_path(
@@ -752,8 +643,11 @@ class GCodeExecutorNode(Node):
 
         print(f"\n{'='*60}")
         print(f" Done.")
-        print(f"  Segments executed : {ok_count}")
-        print(f"  Segments skipped  : {skip_count}")
+        print(f"  Segments executed  : {ok_count}")
+        print(f"  Segments skipped   : {skip_count}")
+        print(f"  Layers printed     : {current_layer}")
+        print(f"  Starting delay     : {KLIPPER_DELAY_SEC:.3f} s  (layer 1)")
+        print(f"  Final delay        : {current_delay:.3f} s  (layer {current_layer})")
         print(f"{'='*60}")
 
 
@@ -761,7 +655,7 @@ class GCodeExecutorNode(Node):
 
 def main():
     if len(sys.argv) < 2:
-        print('Usage: python3 gcode_executor.py <interpreted_gcode.csv>')
+        print('Usage: python3 gcode_executorOLD_delay_sweep.py <interpreted_gcode.csv>')
         sys.exit(1)
 
     csv_path = sys.argv[1]
