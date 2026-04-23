@@ -34,7 +34,7 @@ import sys
 # Units: metres.  Adjust these to match your physical setup.
 BED_ORIGIN_X =  -0.748   # metres
 BED_ORIGIN_Y =  -0.25   # metres
-BED_ORIGIN_Z =  -0.5322   # metres
+BED_ORIGIN_Z =  -0.5322   # metres 0.5322
 
 # ─── Nozzle orientation override ─────────────────────────────────────────────
 # Set OVERRIDE_ORIENTATION = True to replace every waypoint's quaternion with
